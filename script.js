@@ -1,10 +1,12 @@
-/* TIDSREISEN: KLOKKEMESTEREN - Versjon 2.0 (Fikset visere) */
+/* TIDSREISEN: KLOKKEMESTEREN - Versjon 3.0 (Fixed Rotation) */
+
+// --- KONFIGURASJON ---
 
 const LEVELS = {
     1: { name: "Hel og Halv", minutes: [0, 30], type: "analog" },
     2: { name: "Kvart over/på", minutes: [0, 15, 30, 45], type: "analog" },
     3: { name: "5 minutter", minutes: [0, 5, 10, 20, 25, 35, 40, 50, 55], type: "analog" },
-    4: { name: "Nøtteknekkeren", minutes: [20, 25, 35, 40], type: "analog" },
+    4: { name: "Nøtteknekkeren", minutes: [20, 25, 35, 40], type: "analog" }, // Rundt halv
     5: { name: "Minuttmester", minutes: "all", type: "analog" },
     6: { name: "Digital Ekspert", minutes: "all", type: "mixed" }
 };
@@ -26,6 +28,7 @@ const SHOP_ITEMS = [
     { id: "bg_default", type: "background", name: "Standard", cost: 0, cssClass: "" },
 ];
 
+// --- STATE ---
 let state = {
     crystals: 0,
     ownedItems: ["face_default", "hand_default", "bg_default"],
@@ -34,6 +37,13 @@ let state = {
     currentEpochIndex: 0,
     questionsAnsweredInEpoch: 0,
     currentTask: null
+};
+
+// --- DOM ELEMENTER ---
+const screens = {
+    menu: document.getElementById('main-menu'),
+    shop: document.getElementById('shop-view'),
+    game: document.getElementById('game-view')
 };
 
 const ui = {
@@ -47,6 +57,7 @@ const ui = {
     digitalDisplay: document.getElementById('digital-display'),
     
     // Klokke deler
+    // Merk: Vi roterer gruppene (<g>) som inneholder viserne
     hourHand: document.getElementById('hour-hand-group'),
     minuteHand: document.getElementById('minute-hand-group'),
     clockFace: document.getElementById('clock-face-circle'),
@@ -60,13 +71,14 @@ const ui = {
     inputs: { h: document.getElementById('inp-hour'), m: document.getElementById('inp-min') }
 };
 
+// --- INIT ---
 function init() {
     loadSaveData();
     renderLevelGrid();
     setupEventListeners();
     updateCurrencyUI();
     applyEquippedItems();
-    drawClockFace(); // Tegner tallene på klokka
+    drawClockFace(); // Tegner tallene
 }
 
 // --- TEGN TALL PÅ KLOKKA ---
@@ -74,11 +86,10 @@ function drawClockFace() {
     ui.clockNumbersGroup.innerHTML = "";
     const centerX = 150;
     const centerY = 150;
-    const radius = 115; // Hvor langt ut tallene skal stå
+    const radius = 120; // Litt innenfor kanten (r=140)
 
     for (let i = 1; i <= 12; i++) {
-        // Matematikk: 360 grader / 12 = 30 grader per tall.
-        // Vi trekker fra 90 grader fordi 0 grader vanligvis er "klokka 3" i trigonometri.
+        // 30 grader per tall. Minus 90 grader for å starte på toppen (kl 12).
         const angle = (i * 30 - 90) * (Math.PI / 180);
         
         const x = centerX + radius * Math.cos(angle);
@@ -86,13 +97,31 @@ function drawClockFace() {
         
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
         text.setAttribute("x", x);
-        text.setAttribute("y", y + 7); // +7 justerer litt for vertikal sentrering av fonten
+        text.setAttribute("y", y); // Sentreres via CSS dominant-baseline
         text.setAttribute("class", "clock-number");
         text.textContent = i;
         
         ui.clockNumbersGroup.appendChild(text);
     }
 }
+
+// --- VISER-ROTASJON (DEN KRITISKE FIKSEN) ---
+function updateClockHands(h, m) {
+    // Minuttviser: 360 grader / 60 min = 6 grader per minutt
+    const mDeg = m * 6;
+    
+    // Timeviser: 360 grader / 12 timer = 30 grader per time.
+    // Pluss 0.5 grader per minutt (30 grader / 60 min) for glidende bevegelse.
+    const hDeg = (h * 30) + (m * 0.5);
+    
+    // VIKTIG: rotate(grader, senterX, senterY)
+    // Senter er hardkodet til 150, 150 fordi viewBox er 300x300.
+    ui.hourHand.setAttribute('transform', `rotate(${hDeg}, 150, 150)`);
+    ui.minuteHand.setAttribute('transform', `rotate(${mDeg}, 150, 150)`);
+}
+
+
+// --- SPILL LOGIKK ---
 
 function startGame(levelId) {
     state.currentLevel = levelId;
@@ -106,6 +135,7 @@ function startGame(levelId) {
 function nextQuestion() {
     const currentEpochConfig = EPOCHS[state.currentEpochIndex];
     
+    // Sjekk progresjon
     if (state.questionsAnsweredInEpoch >= currentEpochConfig.req) {
         state.currentEpochIndex++;
         state.questionsAnsweredInEpoch = 0;
@@ -117,7 +147,10 @@ function nextQuestion() {
         updateEpochUI();
     }
     
+    // Generer ny tid
     const targetTime = generateTimeForLevel(state.currentLevel);
+    
+    // Velg oppgavetype
     let taskType = "quiz";
     const rand = Math.random();
     
@@ -135,6 +168,7 @@ function nextQuestion() {
         userTime: { ...targetTime }
     };
     
+    // Hvis oppgaven er å stille klokka, start med tilfeldig feil tid
     if (taskType === "setClock") {
         state.currentTask.userTime = { 
             h: Math.floor(Math.random() * 12) + 1, 
@@ -163,33 +197,33 @@ function renderQuestionUI() {
     const task = state.currentTask;
     const timeText = timeToNorwegianText(task.targetTime.h, task.targetTime.m);
     
+    // Skjul alt først
     ui.interactionArea.quiz.classList.add('hidden');
     ui.interactionArea.controls.classList.add('hidden');
     ui.interactionArea.digital.classList.add('hidden');
     ui.digitalDisplay.classList.add('hidden');
 
-    // Vis fasit (hvis quiz) eller brukerens tid (hvis still klokka)
+    // Oppdater klokka visuelt
     if (task.type === "setClock") {
         updateClockHands(task.userTime.h, task.userTime.m);
-    } else {
-        updateClockHands(task.targetTime.h, task.targetTime.m);
-    }
-
-    if (task.type === "quiz") {
-        ui.questionText.innerText = "Hva er klokka?";
-        ui.interactionArea.quiz.classList.remove('hidden');
-        generateQuizButtons(timeText);
-        
-    } else if (task.type === "setClock") {
         ui.questionText.innerText = `Still klokka til: ${timeText}`;
         ui.interactionArea.controls.classList.remove('hidden');
         
-    } else if (task.type === "digitalInput") {
-        ui.questionText.innerText = "Skriv klokkeslettet digitalt:";
-        ui.interactionArea.digital.classList.remove('hidden');
-        ui.inputs.h.value = "";
-        ui.inputs.m.value = "";
-        ui.inputs.h.focus();
+    } else {
+        // For quiz og digital input viser vi fasiten på klokka
+        updateClockHands(task.targetTime.h, task.targetTime.m);
+        
+        if (task.type === "quiz") {
+            ui.questionText.innerText = "Hva er klokka?";
+            ui.interactionArea.quiz.classList.remove('hidden');
+            generateQuizButtons(timeText);
+        } else if (task.type === "digitalInput") {
+            ui.questionText.innerText = "Skriv klokkeslettet digitalt:";
+            ui.interactionArea.digital.classList.remove('hidden');
+            ui.inputs.h.value = "";
+            ui.inputs.m.value = "";
+            ui.inputs.h.focus();
+        }
     }
 }
 
@@ -199,6 +233,7 @@ function generateQuizButtons(correctText) {
     while (answers.length < 3) {
         let fakeH = Math.floor(Math.random() * 12) + 1;
         let fakeM = Math.floor(Math.random() * 60);
+        // Prøv å lag troverdige feil svar basert på nivået
         if (Array.isArray(LEVELS[state.currentLevel].minutes)) {
              let opts = LEVELS[state.currentLevel].minutes;
              fakeM = opts[Math.floor(Math.random() * opts.length)];
@@ -222,41 +257,76 @@ function checkAnswer(isCorrect) {
         addCrystals(10);
         state.questionsAnsweredInEpoch++;
         updateProgressUI();
+        // Vent litt før neste spørsmål så man ser at man svarte rett
         setTimeout(nextQuestion, 1500);
     } else {
         showFeedback("Prøv igjen!", false);
     }
 }
 
+// --- KNAPPER OG LOGIKK ---
+
+// Knapp: Svar på "Still klokka"
 document.getElementById('submit-clock-btn').onclick = () => {
     const target = state.currentTask.targetTime;
     const user = state.currentTask.userTime;
     
-    // Normaliser timer for sjekk (12 == 0 i logikk noen ganger)
     let userH = user.h; 
     let targetH = target.h;
     
-    // Tillater presis match.
+    // Tillat presis match (siden vi bruker knapper er det mulig)
     if (userH === targetH && user.m === target.m) {
         checkAnswer(true);
     } else {
-        showFeedback("Nesten... Prøv igjen!", false);
+        showFeedback("Feil tid. Prøv igjen!", false);
     }
 };
 
+// Knapp: Svar på "Digital input"
 document.getElementById('submit-digital-btn').onclick = () => {
     const hInput = parseInt(ui.inputs.h.value);
     const mInput = parseInt(ui.inputs.m.value);
     const target = state.currentTask.targetTime;
     
+    // Sjekk både 12t og 24t format (f.eks. kl 1 kan være 01 eller 13)
     let targetH = target.h;
     let targetH24 = target.h + 12; 
-    const correctHour = (hInput === targetH || hInput === targetH24 || (targetH===12 && hInput===0));
     
-    if (correctHour && mInput === target.m) checkAnswer(true);
-    else showFeedback("Feil tall. Prøv igjen!", false);
+    // Spesialtilfelle: Klokka 12 kan være 00 eller 12
+    const correctHour = (
+        hInput === targetH || 
+        hInput === targetH24 || 
+        (targetH === 12 && hInput === 0)
+    );
+    
+    if (correctHour && mInput === target.m) {
+        checkAnswer(true);
+    } else {
+        showFeedback("Feil tall. Prøv igjen!", false);
+    }
 };
 
+// Logikk for +/- knappene
+window.adjustTime = function(addH, addM) {
+    let t = state.currentTask.userTime;
+    
+    t.m += addM;
+    // Rullering av minutter
+    if (t.m >= 60) { t.m -= 60; t.h++; }
+    if (t.m < 0) { t.m += 60; t.h--; }
+    
+    // Juster time hvis minutter rullet over
+    t.h += addH; // (Hvis knappen var +/- time)
+    
+    // Rullering av timer (1-12)
+    if (t.h > 12) t.h = 1;
+    if (t.h < 1) t.h = 12;
+    
+    // Oppdater viserne visuelt
+    updateClockHands(t.h, t.m);
+};
+
+// --- NORSK TEKST GENERATOR ---
 function timeToNorwegianText(h, m) {
     let nextHour = h + 1;
     if (nextHour > 12) nextHour = 1;
@@ -265,48 +335,28 @@ function timeToNorwegianText(h, m) {
     if (m === 15) return `Kvart over ${h}`;
     if (m === 30) return `Halv ${nextHour}`;
     if (m === 45) return `Kvart på ${nextHour}`;
+    
     if (m < 20) return `${m} over ${h}`;
     
+    // "På halv" sonen
     if (m >= 20 && m < 30) {
         let diff = 30 - m;
         return `${diff} på halv ${nextHour}`;
     }
+    // "Over halv" sonen
     if (m > 30 && m <= 40) {
         let diff = m - 30;
         return `${diff} over halv ${nextHour}`;
     }
+    
+    // "På neste time" sonen
     if (m > 40) {
         let diff = 60 - m;
         return `${diff} på ${nextHour}`;
     }
+    
     return `${h}:${m}`;
 }
-
-// --- KLOKKE VISUALISERING (FIKSET ROTASJON) ---
-function updateClockHands(h, m) {
-    // Minuttviser: 6 grader per minutt (360 / 60)
-    const mDeg = m * 6;
-    
-    // Timeviser: 30 grader per time + (0.5 grader per minutt)
-    const hDeg = (h * 30) + (m * 0.5);
-    
-    // Her er magien: Vi flytter gruppen til sentrum (150, 150) og roterer den der.
-    ui.hourHand.setAttribute('transform', `translate(150, 150) rotate(${hDeg})`);
-    ui.minuteHand.setAttribute('transform', `translate(150, 150) rotate(${mDeg})`);
-}
-
-window.adjustTime = function(addH, addM) {
-    let t = state.currentTask.userTime;
-    t.m += addM;
-    if (t.m >= 60) { t.m -= 60; t.h++; }
-    if (t.m < 0) { t.m += 60; t.h--; }
-    
-    if (t.h > 12) t.h = 1;
-    if (t.h < 1) t.h = 12;
-    
-    // I "adjustTime" oppdaterer vi klokka til brukeren
-    updateClockHands(t.h, t.m);
-};
 
 // --- BUTIKK & MENY ---
 function renderLevelGrid() {
@@ -409,7 +459,7 @@ function switchScreen(screenName) {
         renderShop('clockface');
     } else if (screenName === 'game') {
         screens.game.classList.remove('hidden');
-        drawClockFace(); // Pass på at tallene er tegnet
+        drawClockFace(); 
     }
 }
 
@@ -418,6 +468,7 @@ function endGame() {
     setTimeout(() => switchScreen('menu'), 3000);
 }
 
+// --- LAGRING ---
 function saveData() {
     localStorage.setItem('klokkemester_save', JSON.stringify({
         crystals: state.crystals,
@@ -449,4 +500,5 @@ function setupEventListeners() {
     });
 }
 
+// Start appen
 init();
