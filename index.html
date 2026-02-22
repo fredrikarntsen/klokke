@@ -3,151 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lær Klokka!</title>
-    <style>
-        body { font-family: 'Arial', sans-serif; text-align: center; background-color: #f0f8ff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        h1 { color: #333; }
-        canvas { background-color: white; border-radius: 50%; border: 5px solid #333; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .buttons { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 100%; max-width: 400px; }
-        button { padding: 15px; font-size: 18px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-        button:hover { background-color: #45a049; }
-        #message { font-size: 24px; font-weight: bold; margin-top: 20px; height: 30px; color: #333; }
-        .wrong { background-color: #f44336 !important; }
-    </style>
+    <title>Tidsreisen: Klokkemesteren</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <h1>Hva er klokka?</h1>
-    <canvas id="clockCanvas" width="300" height="300"></canvas>
-    
-    <div id="message"></div>
-    
-    <div class="buttons" id="buttonContainer">
-        </div>
+    <div id="app-container">
+        
+        <header id="top-bar" class="hidden">
+            <div class="currency-box">
+                <span class="crystal-icon">💎</span>
+                <span id="crystal-count">0</span>
+            </div>
+            <button id="home-btn" class="nav-btn">🏠 Meny</button>
+        </header>
 
-    <script>
-        const canvas = document.getElementById("clockCanvas");
-        const ctx = canvas.getContext("2d");
-        const radius = canvas.height / 2;
-        ctx.translate(radius, radius);
-        const loopRadius = radius * 0.90;
-
-        let currentHour, currentMinute;
-
-        function drawClock() {
-            drawFace(ctx, loopRadius);
-            drawNumbers(ctx, loopRadius);
-            drawTime(ctx, loopRadius);
-        }
-
-        function drawFace(ctx, radius) {
-            ctx.beginPath();
-            ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = 'white';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(0, 0, radius * 0.1, 0, 2 * Math.PI);
-            ctx.fillStyle = '#333';
-            ctx.fill();
-        }
-
-        function drawNumbers(ctx, radius) {
-            ctx.font = radius * 0.15 + "px arial";
-            ctx.textBaseline = "middle";
-            ctx.textAlign = "center";
-            for(let num = 1; num < 13; num++){
-                let ang = num * Math.PI / 6;
-                ctx.rotate(ang);
-                ctx.translate(0, -radius * 0.85);
-                ctx.rotate(-ang);
-                ctx.fillText(num.toString(), 0, 0);
-                ctx.rotate(ang);
-                ctx.translate(0, radius * 0.85);
-                ctx.rotate(-ang);
-            }
-        }
-
-        function drawTime(ctx, radius){
-            // Timeviser
-            let hour = currentHour % 12;
-            hour = (hour*Math.PI/6) + (currentMinute*Math.PI/(6*60));
-            drawHand(ctx, hour, radius*0.5, radius*0.07, "#333");
+        <section id="main-menu" class="view active">
+            <h1 class="game-title">Tidsreisen</h1>
+            <h2 class="game-subtitle">Klokkemesteren</h2>
             
-            // Minuttviser
-            let minute = (currentMinute*Math.PI/30);
-            drawHand(ctx, minute, radius*0.8, radius*0.04, "red");
-        }
+            <div class="menu-currency">
+                <span>💎</span> <span id="menu-crystal-count">0</span>
+            </div>
 
-        function drawHand(ctx, pos, length, width, color) {
-            ctx.beginPath();
-            ctx.lineWidth = width;
-            ctx.lineCap = "round";
-            ctx.strokeStyle = color;
-            ctx.moveTo(0,0);
-            ctx.rotate(pos);
-            ctx.lineTo(0, -length);
-            ctx.stroke();
-            ctx.rotate(-pos);
-        }
+            <button id="shop-btn" class="big-btn shop-btn">🛒 Butikk & Skins</button>
 
-        function generateGame() {
-            // Lag et tilfeldig tidspunkt (kun hele kvarter for å gjøre det enklere i starten)
-            currentHour = Math.floor(Math.random() * 12) + 1;
-            const minutesOptions = [0, 15, 30, 45];
-            currentMinute = minutesOptions[Math.floor(Math.random() * minutesOptions.length)];
+            <div class="level-select-container">
+                <h3>Velg oppdrag:</h3>
+                <div class="level-grid" id="level-grid">
+                    </div>
+            </div>
+        </section>
 
-            drawClock();
-            generateButtons();
-            document.getElementById("message").innerText = "";
-        }
-
-        function formatTime(h, m) {
-            let mStr = m === 0 ? "00" : m;
-            return `${h}:${mStr}`;
-        }
-
-        function generateButtons() {
-            const container = document.getElementById("buttonContainer");
-            container.innerHTML = "";
+        <section id="shop-view" class="view hidden">
+            <h2>Butikken</h2>
+            <p>Bruk krystaller på nye utseender!</p>
             
-            let correctAnswer = formatTime(currentHour, currentMinute);
-            let options = [correctAnswer];
+            <div class="shop-tabs">
+                <button class="tab-btn active" data-category="clockface">Urskiver</button>
+                <button class="tab-btn" data-category="hands">Visere</button>
+                <button class="tab-btn" data-category="background">Bakgrunner</button>
+            </div>
 
-            while (options.length < 3) {
-                let rH = Math.floor(Math.random() * 12) + 1;
-                let rM = [0, 15, 30, 45][Math.floor(Math.random() * 4)];
-                let wrongAnswer = formatTime(rH, rM);
-                if (!options.includes(wrongAnswer)) {
-                    options.push(wrongAnswer);
-                }
-            }
+            <div id="shop-grid" class="shop-grid">
+                </div>
+            
+            <button id="back-from-shop" class="big-btn">Tilbake</button>
+        </section>
 
-            // Bland rekkefølgen på knappene
-            options.sort(() => Math.random() - 0.5);
+        <section id="game-view" class="view hidden">
+            
+            <div class="game-header">
+                <div class="epoch-badge" id="current-epoch-name">Steinalderen</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="level-progress"></div>
+                </div>
+            </div>
 
-            options.forEach(opt => {
-                let btn = document.createElement("button");
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(opt, correctAnswer, btn);
-                container.appendChild(btn);
-            });
-        }
+            <div class="clock-container">
+                <div class="clock-wrapper" id="clock-wrapper">
+                    <svg viewBox="0 0 200 200" id="analog-clock">
+                        <circle cx="100" cy="100" r="95" class="clock-face" id="clock-face-circle" />
+                        <g id="clock-markers"></g>
+                        
+                        <g id="hour-hand-group" transform="translate(100, 100)">
+                            <rect x="-3" y="-50" width="6" height="60" class="hand hour-hand" id="hour-hand-rect" rx="2" />
+                        </g>
+                        <g id="minute-hand-group" transform="translate(100, 100)">
+                            <rect x="-2" y="-80" width="4" height="90" class="hand minute-hand" id="minute-hand-rect" rx="2" />
+                        </g>
+                        
+                        <circle cx="100" cy="100" r="4" class="clock-center" />
+                    </svg>
+                    
+                    <div id="digital-display" class="hidden">12:00</div>
+                </div>
+            </div>
 
-        function checkAnswer(selected, correct, btnElement) {
-            const msg = document.getElementById("message");
-            if (selected === correct) {
-                msg.innerText = "Riktig! Bra jobba!";
-                msg.style.color = "green";
-                setTimeout(generateGame, 1500); // Ny runde etter 1.5 sekund
-            } else {
-                msg.innerText = "Prøv igjen!";
-                msg.style.color = "red";
-                btnElement.classList.add("wrong");
-            }
-        }
+            <div class="question-area">
+                <h3 id="question-text">Hva er klokka?</h3>
+                
+                <div id="interaction-area">
+                    <div id="quiz-buttons" class="hidden options-grid"></div>
 
-        // Start spillet
-        generateGame();
-    </script>
+                    <div id="clock-controls" class="hidden control-panel">
+                        <button class="adjust-btn" onclick="adjustTime(0, -5)">-5 min</button>
+                        <button class="adjust-btn" onclick="adjustTime(0, 5)">+5 min</button>
+                        <br>
+                        <button class="adjust-btn" onclick="adjustTime(-1, 0)">-1 time</button>
+                        <button class="adjust-btn" onclick="adjustTime(1, 0)">+1 time</button>
+                        <br>
+                        <button id="submit-clock-btn" class="action-btn">Svar</button>
+                    </div>
+
+                    <div id="digital-input-area" class="hidden">
+                         <input type="number" id="inp-hour" placeholder="00" min="0" max="23"> : 
+                         <input type="number" id="inp-min" placeholder="00" min="0" max="59">
+                         <button id="submit-digital-btn" class="action-btn">Svar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="feedback-msg" class="feedback hidden">Riktig!</div>
+
+        </section>
+
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
