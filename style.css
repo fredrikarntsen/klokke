@@ -1,12 +1,13 @@
 :root {
     /* Fargepalett */
     --bg-color: #1a1a2e;
-    --card-bg: rgba(22, 33, 62, 0.85); /* Mer gjennomsiktig for å se bakgrunnen */
-    --primary: #0f3460;
+    /* Endring: Mye mer gjennomsiktig bakgrunn (0.6) for at bildet skal synes */
+    --card-bg: rgba(22, 33, 62, 0.6); 
+    --primary: rgba(15, 52, 96, 0.8); /* Også knappene litt gjennomsiktige */
     --accent: #e94560;
     --gold: #ffd700;
     --text-main: #ffffff;
-    --text-muted: #a0a0a0;
+    --text-muted: #dadada;
     
     /* Font */
     --font-main: 'Fredoka', sans-serif;
@@ -28,10 +29,12 @@ body {
     justify-content: center;
     min-height: 100vh;
     overflow-x: hidden;
-    /* Bakgrunnsbilde-innstillinger */
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    
+    /* VIKTIG ENDRING FOR BILDER: */
+    background-size: cover;       /* Dekk HELE vinduet */
+    background-position: center;  /* Sentrer bildet */
+    background-attachment: fixed; /* Bildet står stille når man scroller */
+    background-repeat: no-repeat;
     transition: background-image 0.5s ease-in-out;
 }
 
@@ -44,8 +47,10 @@ body {
     position: relative;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    backdrop-filter: blur(8px); /* Blur-effekt */
+    box-shadow: 0 0 30px rgba(0,0,0,0.7);
+    /* Blur-effekt: Gjør bakgrunnen bak klokken "tåkete" så man ser bildet, men kan lese tekst */
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); /* For Safari/iPad */
 }
 
 /* --- TOPP BAR & VALUTA --- */
@@ -54,7 +59,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .currency-box {
@@ -64,6 +69,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    text-shadow: 2px 2px 0 #000;
 }
 
 .nav-btn {
@@ -94,7 +100,8 @@ body {
 
 h1, h2, h3 {
     margin-bottom: 15px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    /* Kraftigere skygge så tekst synes oppå bilder */
+    text-shadow: 0 0 10px rgba(0,0,0,1), 2px 2px 0 rgba(0,0,0,1); 
 }
 
 .big-btn {
@@ -111,6 +118,7 @@ h1, h2, h3 {
     transition: transform 0.1s;
     width: 100%;
     max-width: 300px;
+    text-shadow: 2px 2px 0 #000;
 }
 
 .big-btn:active {
@@ -123,7 +131,7 @@ h1, h2, h3 {
     font-family: var(--font-game);
     color: var(--gold);
     font-size: 2rem;
-    text-shadow: 3px 3px 0 #000;
+    text-shadow: 4px 4px 0 #000;
     margin-top: 20px;
 }
 
@@ -154,7 +162,8 @@ h1, h2, h3 {
     flex-direction: column;
     align-items: center;
     gap: 5px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+    text-shadow: 1px 1px 0 #000;
 }
 
 .level-btn:hover {
@@ -182,7 +191,7 @@ h1, h2, h3 {
 .progress-container {
     width: 100%;
     height: 10px;
-    background: #333;
+    background: rgba(0,0,0,0.5);
     border-radius: 5px;
     overflow: hidden;
     border: 1px solid #555;
@@ -206,11 +215,12 @@ h1, h2, h3 {
 #analog-clock {
     width: 300px;
     height: 300px;
-    filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
+    /* Kraftigere skygge bak klokka for å skille den fra bakgrunnen */
+    filter: drop-shadow(0 0 20px rgba(0,0,0,0.9));
 }
 
 .clock-face {
-    fill: white; 
+    fill: rgba(255, 255, 255, 0.95); /* Nesten helt hvit urskive */
     stroke: #333;
     stroke-width: 8px;
 }
@@ -254,7 +264,7 @@ h1, h2, h3 {
 }
 
 .quiz-btn {
-    background: white;
+    background: rgba(255, 255, 255, 0.9);
     color: black;
     border: none;
     padding: 15px;
@@ -265,7 +275,7 @@ h1, h2, h3 {
     box-shadow: 0 4px 0 #ccc;
 }
 .quiz-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #ccc; }
-.quiz-btn:hover { background: #f0f0f0; }
+.quiz-btn:hover { background: #fff; }
 
 .control-panel {
     display: flex;
@@ -283,8 +293,9 @@ h1, h2, h3 {
     cursor: pointer;
     min-width: 60px;
     font-weight: bold;
+    box-shadow: 0 2px 0 #000;
 }
-.adjust-btn:active { background: var(--accent); }
+.adjust-btn:active { background: var(--accent); transform: translateY(2px); box-shadow: none; }
 
 .action-btn {
     background: var(--accent);
@@ -297,7 +308,9 @@ h1, h2, h3 {
     margin-top: 10px;
     width: 100%;
     font-weight: bold;
+    box-shadow: 0 4px 0 #922b3e;
 }
+.action-btn:active { transform: translateY(2px); box-shadow: none; }
 
 /* Digital Input */
 #digital-input-area {
@@ -315,6 +328,7 @@ h1, h2, h3 {
     text-align: center;
     border-radius: 5px;
     border: none;
+    background: rgba(255,255,255,0.9);
 }
 
 /* --- BUTIKK --- */
@@ -329,7 +343,7 @@ h1, h2, h3 {
 }
 
 .shop-item {
-    background: rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.4);
     border: 2px solid transparent;
     padding: 10px;
     border-radius: 10px;
@@ -341,12 +355,11 @@ h1, h2, h3 {
 }
 .shop-item:active { transform: scale(0.98); }
 
-.shop-item.owned { border-color: var(--gold); opacity: 0.8; }
+.shop-item.owned { border-color: var(--gold); background: rgba(0,0,0,0.6); }
 .shop-item.selected {
     background: rgba(255, 215, 0, 0.2);
     border-color: var(--gold);
     box-shadow: 0 0 10px var(--gold);
-    opacity: 1;
 }
 
 .item-preview {
@@ -360,18 +373,18 @@ h1, h2, h3 {
     border: 2px solid white;
 }
 
-.price-tag { color: var(--gold); font-weight: bold; }
+.price-tag { color: var(--gold); font-weight: bold; text-shadow: 1px 1px 0 #000; }
 
 .shop-tabs { display: flex; gap: 10px; margin-bottom: 10px; }
 .tab-btn {
     flex: 1; padding: 8px;
-    background: transparent;
+    background: rgba(0,0,0,0.5);
     border: 1px solid var(--text-muted);
     color: var(--text-muted);
     cursor: pointer;
     font-weight: bold;
 }
-.tab-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.1); }
+.tab-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.2); }
 
 
 /* --- FEEDBACK POPUP --- */
@@ -389,6 +402,7 @@ h1, h2, h3 {
     z-index: 100;
     text-align: center;
     white-space: nowrap;
+    box-shadow: 0 0 20px var(--gold);
 }
 @keyframes popIn {
     0% { transform: translate(-50%, -50%) scale(0); }
@@ -396,37 +410,39 @@ h1, h2, h3 {
     100% { transform: translate(-50%, -50%) scale(1); }
 }
 
-/* --- BAKGRUNNSBILDER --- */
+/* --- BAKGRUNNSBILDER (NYE & FORBEDRET) --- */
 
 /* 1. EPOKER (Standard tidsreise) */
-/* Steinalder: Grotte/Natur */
+/* Steinalder: Ny lenke (Grotteåpning) */
 body.epoch-stone { 
-    background-image: url('https://images.unsplash.com/photo-1542259698-3e330d1d7062?q=80&w=1000&auto=format&fit=crop');
+    background-image: url('https://images.unsplash.com/photo-1516641396056-0ce60a85d49f?q=80&w=1200&auto=format&fit=crop');
 }
-/* Middelalder: Borg/Steinmur */
+/* Middelalder: Ny lenke (Steinslott) */
 body.epoch-middle { 
-    background-image: url('https://images.unsplash.com/photo-1599597405763-7c858564e294?q=80&w=1000&auto=format&fit=crop');
+    background-image: url('https://images.unsplash.com/photo-1533154683836-84ea2a41380f?q=80&w=1200&auto=format&fit=crop');
 }
-/* Nåtid: By/Skole */
+/* Nåtid: By (Beholdes) */
 body.epoch-modern { 
-    background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=1000&auto=format&fit=crop');
+    background-image: url('https://images.unsplash.com/photo-1449824913929-23352853d40d?q=80&w=1200&auto=format&fit=crop');
 }
-/* Fremtid: Neon/Sci-fi */
+/* Fremtid: Neon (Beholdes) */
 body.epoch-future { 
-    background-image: url('https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=1000&auto=format&fit=crop');
+    background-image: url('https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=1200&auto=format&fit=crop');
 }
 
 
-/* 2. SKINS FRA BUTIKKEN (Overstyrer epoker hvis valgt) */
+/* 2. SKINS FRA BUTIKKEN */
 body.skin-bg-fotball {
-    background-image: url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1000&auto=format&fit=crop');
+    background-image: url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1200&auto=format&fit=crop');
 }
 body.skin-bg-gaming {
-    background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop');
+    background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop');
 }
 body.skin-bg-dyr {
-    background-image: url('https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1000&auto=format&fit=crop');
+    background-image: url('https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1200&auto=format&fit=crop');
 }
+
+/* Superhelt: NYTT BILDE (Tegneserie-aktig, fargerik by om natten/neon/pop-art stil) */
 body.skin-bg-superhelt {
-    background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=1000&auto=format&fit=crop');
+    background-image: url('https://images.unsplash.com/photo-1565586665798-28564f89d34e?q=80&w=1200&auto=format&fit=crop');
 }
