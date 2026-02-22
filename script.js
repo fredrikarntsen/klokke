@@ -1,4 +1,4 @@
-/* TIDSREISEN: KLOKKEMESTEREN - Versjon 6.0 (Themes & Skins Fixed) */
+/* TIDSREISEN: KLOKKEMESTEREN - Versjon 7.0 (Bugfix & Safety) */
 
 const LEVELS = {
     1: { name: "Hel og Halv", minutes: [0, 30], type: "analog" },
@@ -17,17 +17,12 @@ const EPOCHS = [
 ];
 
 const SHOP_ITEMS = [
-    // Urskiver
     { id: "face_default", type: "clockface", name: "Standard", cost: 0, cssClass: "" },
     { id: "face_space", type: "clockface", name: "Romfart", cost: 100, cssClass: "skin-space" },
     { id: "face_soccer", type: "clockface", name: "Fotball", cost: 150, cssClass: "skin-soccer" },
-    
-    // Visere
-    { id: "hand_default", type: "hands", name: "Standard", cost: 0, color: "" }, // Farge settes av CSS (via epoke) hvis tom
+    { id: "hand_default", type: "hands", name: "Standard", cost: 0, color: "" },
     { id: "hand_gold", type: "hands", name: "Gullvisere", cost: 200, color: "#ffd700" },
     { id: "hand_blue", type: "hands", name: "Laserblå", cost: 150, color: "#00ffff" },
-    
-    // Bakgrunner
     { id: "bg_default", type: "background", name: "Tidsreise (Standard)", cost: 0, cssClass: "" },
     { id: "bg_fotball", type: "background", name: "Fotballbane", cost: 250, cssClass: "skin-bg-fotball" },
     { id: "bg_gaming", type: "background", name: "Minecraft-stil", cost: 300, cssClass: "skin-bg-gaming" },
@@ -69,13 +64,14 @@ const ui = {
 function init() {
     loadSaveData();
     renderLevelGrid();
-    setupEventListeners();
+    setupEventListeners(); // Lyttere FØR vi tegner grafikk
     updateCurrencyUI();
     applyEquippedItems();
     drawClockFace();
 }
 
 function drawClockFace() {
+    if (!ui.clockNumbersGroup) return; // Sikkerhetssjekk
     ui.clockNumbersGroup.innerHTML = "";
     const centerX = 150; const centerY = 150; const radius = 120; 
     for (let i = 1; i <= 12; i++) {
@@ -90,6 +86,7 @@ function drawClockFace() {
 }
 
 function updateClockHands(h, m) {
+    if (!ui.hourHand || !ui.minuteHand) return;
     const mDeg = m * 6; const hDeg = (h * 30) + (m * 0.5);
     ui.hourHand.setAttribute('transform', `rotate(${hDeg}, 150, 150)`);
     ui.minuteHand.setAttribute('transform', `rotate(${mDeg}, 150, 150)`);
@@ -105,6 +102,9 @@ function startGame(levelId) {
 }
 
 function nextQuestion() {
+    // Sjekk om epoch index er gyldig
+    if (state.currentEpochIndex >= EPOCHS.length) state.currentEpochIndex = EPOCHS.length - 1;
+    
     const currentEpochConfig = EPOCHS[state.currentEpochIndex];
     if (state.questionsAnsweredInEpoch >= currentEpochConfig.req) {
         state.currentEpochIndex++;
@@ -264,40 +264,30 @@ function handleShopClick(item) {
 }
 
 function applyEquippedItems() {
-    // 1. Urskive
     const faceItem = SHOP_ITEMS.find(i => i.id === state.equipped.clockface);
-    if (faceItem) ui.clockFace.className.baseVal = "clock-face " + (faceItem.cssClass || "");
+    if (faceItem && ui.clockFace) ui.clockFace.className.baseVal = "clock-face " + (faceItem.cssClass || "");
     
-    // 2. Visere
     const handItem = SHOP_ITEMS.find(i => i.id === state.equipped.hands);
     if (handItem) {
-        if (handItem.color) {
-            // Hvis man har valgt en farge (gull/blå), bruk den
-            document.querySelector('.minute-hand').style.fill = handItem.color;
-        } else {
-            // Hvis standard (tom farge), fjern inline style så CSS (Epoke) styrer fargen
-            document.querySelector('.minute-hand').style.fill = "";
-        }
+        if (handItem.color) document.querySelector('.minute-hand').style.fill = handItem.color;
+        else document.querySelector('.minute-hand').style.fill = "";
     }
-
-    // 3. Bakgrunn
     applyBackground();
 }
 
 function applyBackground() {
-    // DENNE FUNKSJONEN ER FIKSET NÅ
+    // Sjekk at index er gyldig
+    if (state.currentEpochIndex < 0 || state.currentEpochIndex >= EPOCHS.length) state.currentEpochIndex = 0;
     const epoch = EPOCHS[state.currentEpochIndex];
     const bgId = state.equipped.background;
 
-    // 1. Alltid sett epoke-klassen (Base Theme)
+    // 1. Alltid sett epoke-klassen
     document.body.className = epoch.bgClass;
 
-    // 2. Hvis vi har et custom skin, legg til det OPPÅ
+    // 2. Hvis custom skin, legg til det
     if (bgId !== "bg_default") {
         const item = SHOP_ITEMS.find(i => i.id === bgId);
-        if (item) {
-            document.body.classList.add(item.cssClass);
-        }
+        if (item) document.body.classList.add(item.cssClass);
     }
 }
 
@@ -305,7 +295,7 @@ function updateEpochUI() {
     const epoch = EPOCHS[state.currentEpochIndex];
     ui.epochName.innerText = epoch.name;
     updateProgressUI();
-    applyBackground(); // Sørger for at UI-temaet oppdateres ved ny epoke
+    applyBackground();
 }
 
 function updateProgressUI() {
@@ -341,9 +331,9 @@ function loadSaveData() {
     if (data) { const parsed = JSON.parse(data); state.crystals = parsed.crystals || 0; state.ownedItems = parsed.ownedItems || []; state.equipped = parsed.equipped || state.equipped; }
 }
 function setupEventListeners() {
-    document.getElementById('shop-btn').onclick = () => switchScreen('shop');
-    document.getElementById('home-btn').onclick = () => switchScreen('menu');
-    document.getElementById('back-from-shop').onclick = () => switchScreen('menu');
+    const shopBtn = document.getElementById('shop-btn'); if(shopBtn) shopBtn.onclick = () => switchScreen('shop');
+    const homeBtn = document.getElementById('home-btn'); if(homeBtn) homeBtn.onclick = () => switchScreen('menu');
+    const backBtn = document.getElementById('back-from-shop'); if(backBtn) backBtn.onclick = () => switchScreen('menu');
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.onclick = (e) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
