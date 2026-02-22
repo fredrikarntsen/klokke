@@ -1,7 +1,7 @@
 :root {
     /* Fargepalett */
     --bg-color: #1a1a2e;
-    --card-bg: rgba(22, 33, 62, 0.95); /* Gjort litt gjennomsiktig for bakgrunner */
+    --card-bg: rgba(22, 33, 62, 0.85); /* Mer gjennomsiktig for å se bakgrunnen */
     --primary: #0f3460;
     --accent: #e94560;
     --gold: #ffd700;
@@ -28,7 +28,7 @@ body {
     justify-content: center;
     min-height: 100vh;
     overflow-x: hidden;
-    /* For at bakgrunnsbilder skal dekke alt: */
+    /* Bakgrunnsbilde-innstillinger */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -45,7 +45,7 @@ body {
     display: flex;
     flex-direction: column;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    backdrop-filter: blur(5px); /* Kul effekt som gjør bakgrunnen blurry bak appen */
+    backdrop-filter: blur(8px); /* Blur-effekt */
 }
 
 /* --- TOPP BAR & VALUTA --- */
@@ -94,7 +94,7 @@ body {
 
 h1, h2, h3 {
     margin-bottom: 15px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* Bedre lesbarhet på bilder */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
 .big-btn {
@@ -215,7 +215,7 @@ h1, h2, h3 {
     stroke-width: 8px;
 }
 
-/* Skins logic for clock face */
+/* Skins logic */
 .clock-face.skin-space { fill: #2c3e50; stroke: var(--gold); }
 .clock-face.skin-soccer { fill: #27ae60; stroke: white; }
 
@@ -224,7 +224,6 @@ h1, h2, h3 {
 }
 
 .hand {
-    /* Rotasjon styres av JS */
     transition: transform 0.3s cubic-bezier(0.4, 2.08, 0.55, 0.44); 
 }
 
@@ -397,32 +396,37 @@ h1, h2, h3 {
     100% { transform: translate(-50%, -50%) scale(1); }
 }
 
-/* --- BAKGRUNNER (SKINS & EPOKER) --- */
+/* --- BAKGRUNNSBILDER --- */
 
-/* Standard Epoker (Farger/Gradienter) - Brukes hvis ingen skin er valgt */
-body.epoch-stone { background: #2c3e50; }
-body.epoch-middle { background: #5d4037; }
-body.epoch-modern { background: #1abc9c; }
-body.epoch-future { background: #2c0e37; background-image: radial-gradient(circle, #8e44ad 0%, #2c0e37 100%); }
+/* 1. EPOKER (Standard tidsreise) */
+/* Steinalder: Grotte/Natur */
+body.epoch-stone { 
+    background-image: url('https://images.unsplash.com/photo-1542259698-3e330d1d7062?q=80&w=1000&auto=format&fit=crop');
+}
+/* Middelalder: Borg/Steinmur */
+body.epoch-middle { 
+    background-image: url('https://images.unsplash.com/photo-1599597405763-7c858564e294?q=80&w=1000&auto=format&fit=crop');
+}
+/* Nåtid: By/Skole */
+body.epoch-modern { 
+    background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=1000&auto=format&fit=crop');
+}
+/* Fremtid: Neon/Sci-fi */
+body.epoch-future { 
+    background-image: url('https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=1000&auto=format&fit=crop');
+}
 
-/* SHOP SKINS (Bilder) - Disse overstyrer epoker */
-/* Merk: Jeg bruker url() til Unsplash. Du kan endre disse til lokale filer senere. */
 
+/* 2. SKINS FRA BUTIKKEN (Overstyrer epoker hvis valgt) */
 body.skin-bg-fotball {
     background-image: url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1000&auto=format&fit=crop');
 }
-
 body.skin-bg-gaming {
-    /* Minecraft-aktig / Voxel art */
     background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop');
 }
-
 body.skin-bg-dyr {
-    /* Safari / Dyr */
     background-image: url('https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1000&auto=format&fit=crop');
 }
-
 body.skin-bg-superhelt {
-    /* Storby natt (Superhelt stemning) */
     background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=1000&auto=format&fit=crop');
 }
