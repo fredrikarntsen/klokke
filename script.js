@@ -1,4 +1,4 @@
-/* TIDSREISEN: KLOKKEMESTEREN - Versjon 7.0 (Bugfix & Safety) */
+/* TIDSREISEN: KLOKKEMESTEREN - Versjon 7.1 (Bugfix: Screens restored) */
 
 const LEVELS = {
     1: { name: "Hel og Halv", minutes: [0, 30], type: "analog" },
@@ -40,6 +40,13 @@ let state = {
     currentTask: null
 };
 
+// HER MANGLET DETTE I FORRIGE VERSJON:
+const screens = {
+    menu: document.getElementById('main-menu'),
+    shop: document.getElementById('shop-view'),
+    game: document.getElementById('game-view')
+};
+
 const ui = {
     crystalDisplays: [document.getElementById('crystal-count'), document.getElementById('menu-crystal-count')],
     levelGrid: document.getElementById('level-grid'),
@@ -64,14 +71,14 @@ const ui = {
 function init() {
     loadSaveData();
     renderLevelGrid();
-    setupEventListeners(); // Lyttere FØR vi tegner grafikk
+    setupEventListeners();
     updateCurrencyUI();
     applyEquippedItems();
     drawClockFace();
 }
 
 function drawClockFace() {
-    if (!ui.clockNumbersGroup) return; // Sikkerhetssjekk
+    if (!ui.clockNumbersGroup) return;
     ui.clockNumbersGroup.innerHTML = "";
     const centerX = 150; const centerY = 150; const radius = 120; 
     for (let i = 1; i <= 12; i++) {
@@ -102,7 +109,6 @@ function startGame(levelId) {
 }
 
 function nextQuestion() {
-    // Sjekk om epoch index er gyldig
     if (state.currentEpochIndex >= EPOCHS.length) state.currentEpochIndex = EPOCHS.length - 1;
     
     const currentEpochConfig = EPOCHS[state.currentEpochIndex];
@@ -276,7 +282,6 @@ function applyEquippedItems() {
 }
 
 function applyBackground() {
-    // Sjekk at index er gyldig
     if (state.currentEpochIndex < 0 || state.currentEpochIndex >= EPOCHS.length) state.currentEpochIndex = 0;
     const epoch = EPOCHS[state.currentEpochIndex];
     const bgId = state.equipped.background;
@@ -310,6 +315,7 @@ function showFeedback(msg, isBigEvent) {
     setTimeout(() => ui.feedback.classList.add('hidden'), 1500);
 }
 function switchScreen(screenName) {
+    // HER BRUKES SCREENS, OG NÅ ER DEN DEFINERT :)
     Object.values(screens).forEach(s => s.classList.add('hidden'));
     document.getElementById('top-bar').classList.remove('hidden');
     if (screenName === 'menu') {
