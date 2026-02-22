@@ -31,29 +31,23 @@
 
             <div class="level-select-container">
                 <h3>Velg oppdrag:</h3>
-                <div class="level-grid" id="level-grid">
-                    </div>
+                <div class="level-grid" id="level-grid"></div>
             </div>
         </section>
 
         <section id="shop-view" class="view hidden">
             <h2>Butikken</h2>
             <p>Bruk krystaller på nye utseender!</p>
-            
             <div class="shop-tabs">
                 <button class="tab-btn active" data-category="clockface">Urskiver</button>
                 <button class="tab-btn" data-category="hands">Visere</button>
                 <button class="tab-btn" data-category="background">Bakgrunner</button>
             </div>
-
-            <div id="shop-grid" class="shop-grid">
-                </div>
-            
+            <div id="shop-grid" class="shop-grid"></div>
             <button id="back-from-shop" class="big-btn">Tilbake</button>
         </section>
 
         <section id="game-view" class="view hidden">
-            
             <div class="game-header">
                 <div class="epoch-badge" id="current-epoch-name">Steinalderen</div>
                 <div class="progress-container">
@@ -63,18 +57,20 @@
 
             <div class="clock-container">
                 <div class="clock-wrapper" id="clock-wrapper">
-                    <svg viewBox="0 0 200 200" id="analog-clock">
-                        <circle cx="100" cy="100" r="95" class="clock-face" id="clock-face-circle" />
+                    <svg viewBox="0 0 300 300" id="analog-clock">
+                        <circle cx="150" cy="150" r="140" class="clock-face" id="clock-face-circle" />
+                        
                         <g id="clock-markers"></g>
+                        <g id="clock-numbers"></g>
                         
-                        <g id="hour-hand-group" transform="translate(100, 100)">
-                            <rect x="-3" y="-50" width="6" height="60" class="hand hour-hand" id="hour-hand-rect" rx="2" />
+                        <g id="hour-hand-group">
+                            <rect x="-6" y="-80" width="12" height="100" class="hand hour-hand" rx="5" />
                         </g>
-                        <g id="minute-hand-group" transform="translate(100, 100)">
-                            <rect x="-2" y="-80" width="4" height="90" class="hand minute-hand" id="minute-hand-rect" rx="2" />
+                        <g id="minute-hand-group">
+                            <rect x="-4" y="-110" width="8" height="135" class="hand minute-hand" rx="4" />
                         </g>
                         
-                        <circle cx="100" cy="100" r="4" class="clock-center" />
+                        <circle cx="150" cy="150" r="8" class="clock-center" />
                     </svg>
                     
                     <div id="digital-display" class="hidden">12:00</div>
@@ -83,7 +79,6 @@
 
             <div class="question-area">
                 <h3 id="question-text">Hva er klokka?</h3>
-                
                 <div id="interaction-area">
                     <div id="quiz-buttons" class="hidden options-grid"></div>
 
@@ -104,13 +99,10 @@
                     </div>
                 </div>
             </div>
-
             <div id="feedback-msg" class="feedback hidden">Riktig!</div>
-
         </section>
 
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
