@@ -1,4 +1,5 @@
 :root {
+    /* Fargepalett */
     --bg-color: #1a1a2e;
     --card-bg: #16213e;
     --primary: #0f3460;
@@ -6,11 +7,18 @@
     --gold: #ffd700;
     --text-main: #ffffff;
     --text-muted: #a0a0a0;
+    
+    /* Font */
     --font-main: 'Fredoka', sans-serif;
     --font-game: 'Press Start 2P', cursive;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none; /* Hindrer tekstmarkering */
+}
 
 body {
     background-color: var(--bg-color);
@@ -22,6 +30,7 @@ body {
     overflow-x: hidden;
 }
 
+/* Container for hele appen */
 #app-container {
     width: 100%;
     max-width: 600px;
@@ -33,7 +42,7 @@ body {
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 
-/* --- TOPP BAR --- */
+/* --- TOPP BAR & VALUTA --- */
 #top-bar {
     padding: 10px 20px;
     display: flex;
@@ -41,6 +50,7 @@ body {
     align-items: center;
     background: rgba(0, 0, 0, 0.3);
 }
+
 .currency-box {
     font-family: var(--font-game);
     color: var(--gold);
@@ -49,6 +59,7 @@ body {
     align-items: center;
     gap: 10px;
 }
+
 .nav-btn {
     background: var(--primary);
     border: 2px solid var(--accent);
@@ -60,7 +71,7 @@ body {
     cursor: pointer;
 }
 
-/* --- GENERELT --- */
+/* --- GENERELT OPPSETT --- */
 .view {
     padding: 20px;
     flex-grow: 1;
@@ -70,8 +81,14 @@ body {
     text-align: center;
     transition: opacity 0.3s ease;
 }
-.hidden { display: none !important; }
-h1, h2, h3 { margin-bottom: 15px; }
+
+.hidden {
+    display: none !important;
+}
+
+h1, h2, h3 {
+    margin-bottom: 15px;
+}
 
 .big-btn {
     background: linear-gradient(135deg, var(--accent), #c0392b);
@@ -83,14 +100,18 @@ h1, h2, h3 { margin-bottom: 15px; }
     cursor: pointer;
     font-family: var(--font-game);
     margin: 20px 0;
-    box-shadow: 0 4px 0 #922b3e;
+    box-shadow: 0 4px 0 #922b3e; /* 3D effekt */
     transition: transform 0.1s;
     width: 100%;
     max-width: 300px;
 }
-.big-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #922b3e; }
 
-/* --- MENY --- */
+.big-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #922b3e;
+}
+
+/* --- HOVEDMENY --- */
 .game-title {
     font-family: var(--font-game);
     color: var(--gold);
@@ -98,7 +119,13 @@ h1, h2, h3 { margin-bottom: 15px; }
     text-shadow: 2px 2px 0 #000;
     margin-top: 20px;
 }
-.menu-currency { font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; }
+
+.menu-currency {
+    font-size: 1.5rem;
+    color: var(--gold);
+    margin-bottom: 10px;
+}
+
 .level-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -106,6 +133,7 @@ h1, h2, h3 { margin-bottom: 15px; }
     width: 100%;
     max-width: 400px;
 }
+
 .level-btn {
     background: var(--primary);
     border: 2px solid #333;
@@ -119,41 +147,87 @@ h1, h2, h3 { margin-bottom: 15px; }
     align-items: center;
     gap: 5px;
 }
-.level-btn:hover { background: #1a4b85; }
 
-/* --- SPILL --- */
-.game-header { width: 100%; margin-bottom: 10px; }
+.level-btn:hover {
+    background: #1a4b85;
+}
+
+/* --- SPILLET --- */
+.game-header {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
 .epoch-badge {
-    background: var(--gold); color: black; padding: 5px 15px;
-    border-radius: 20px; font-weight: bold; display: inline-block;
-    margin-bottom: 10px; border: 2px solid #fff;
+    background: var(--gold);
+    color: black;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+    border: 2px solid #fff;
 }
+
 .progress-container {
-    width: 100%; height: 10px; background: #333;
-    border-radius: 5px; overflow: hidden;
+    width: 100%;
+    height: 10px;
+    background: #333;
+    border-radius: 5px;
+    overflow: hidden;
 }
+
 .progress-bar {
-    height: 100%; background: var(--accent); width: 0%; transition: width 0.5s ease;
+    height: 100%;
+    background: var(--accent);
+    width: 0%; 
+    transition: width 0.5s ease;
 }
 
 /* --- KLOKKA (SVG) --- */
-.clock-container { margin: 10px 0; position: relative; }
+.clock-container {
+    margin: 10px 0;
+    position: relative;
+    /* Sikrer at containeren ikke kollapser */
+    width: 300px;
+    height: 300px;
+}
+
 #analog-clock {
-    width: 300px; height: 300px; /* Økt størrelse */
+    width: 300px;
+    height: 300px;
     filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
 }
-.clock-face { fill: white; stroke: #333; stroke-width: 8px; }
+
+.clock-face {
+    fill: white; 
+    stroke: #333;
+    stroke-width: 8px;
+}
+
+/* Skins logic */
 .clock-face.skin-space { fill: #2c3e50; stroke: var(--gold); }
 .clock-face.skin-soccer { fill: #27ae60; stroke: white; }
 
-.clock-center { fill: var(--accent); }
+.clock-center {
+    fill: var(--accent);
+    /* Ligger over viserne, ingen interaksjon nødvendig */
+}
 
-/* Viktig: Fjernet transform-origin herfra for å unngå bugs. 
-   Rotasjon styres 100% av JS nå. */
-.hand { transition: none; /* Fjern animasjon midlertidig hvis den hopper */ }
+/* Viser-stil */
+.hand {
+    /* Ingen transform-origin her! Det håndteres av SVG/JS */
+    /* Transition kan legges til hvis du vil ha jevn bevegelse, 
+       men fjern den hvis viseren "spinner" feil vei ved passering av kl 12 */
+    transition: transform 0.3s cubic-bezier(0.4, 2.08, 0.55, 0.44); 
+}
 
-.hour-hand { fill: #333; }
-.minute-hand { fill: var(--accent); }
+.hour-hand {
+    fill: #333;
+}
+.minute-hand {
+    fill: var(--accent);
+}
 
 /* Tall på klokka */
 .clock-number {
@@ -161,76 +235,179 @@ h1, h2, h3 { margin-bottom: 15px; }
     font-size: 24px;
     fill: #333;
     text-anchor: middle; /* Sentrer tekst horisontalt */
-    dominant-baseline: middle; /* Sentrer tekst vertikalt */
+    dominant-baseline: central; /* Sentrer tekst vertikalt */
+    pointer-events: none;
 }
 
-/* Skins for numbers (hvis mørk bakgrunn) */
+/* Justering for skins */
 .skin-space ~ #clock-numbers .clock-number { fill: var(--gold); }
 
+
 /* --- KONTROLLER --- */
-.question-area h3 { font-size: 1.5rem; margin-bottom: 15px; }
-.options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; }
+.question-area h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    width: 100%;
+}
+
 .quiz-btn {
-    background: white; color: black; border: none; padding: 15px;
-    font-size: 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold;
+    background: white;
+    color: black;
+    border: none;
+    padding: 15px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
 }
+
 .quiz-btn:hover { background: #f0f0f0; }
-.control-panel { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+.control-panel {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
 .adjust-btn {
-    background: var(--primary); color: white; border: 1px solid white;
-    padding: 10px; border-radius: 5px; cursor: pointer; min-width: 80px;
+    background: var(--primary);
+    color: white;
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 80px;
 }
+
 .action-btn {
-    background: var(--accent); color: white; border: none;
-    padding: 10px 20px; font-size: 1rem; border-radius: 5px;
-    cursor: pointer; margin-top: 10px; width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
 }
+
+/* Digital Input Style */
 #digital-input-area {
-    font-size: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
+
 #digital-input-area input {
-    width: 60px; padding: 10px; font-size: 1.5rem; text-align: center; border-radius: 5px; border: none;
+    width: 60px;
+    padding: 10px;
+    font-size: 1.5rem;
+    text-align: center;
+    border-radius: 5px;
+    border: none;
 }
 
 /* --- BUTIKK --- */
 .shop-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
-    margin-top: 20px; width: 100%; max-height: 400px; overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
 }
-.shop-item {
-    background: rgba(255,255,255,0.1); border: 2px solid transparent;
-    padding: 10px; border-radius: 10px; cursor: pointer; display: flex;
-    flex-direction: column; align-items: center;
-}
-.shop-item.owned { border-color: var(--gold); opacity: 0.7; }
-.shop-item.selected {
-    background: rgba(255, 215, 0, 0.2); border-color: var(--gold); box-shadow: 0 0 10px var(--gold);
-}
-.item-preview {
-    width: 50px; height: 50px; margin-bottom: 10px;
-    background-size: cover; background-position: center; border-radius: 50%; background-color: #fff;
-}
-.price-tag { color: var(--gold); font-weight: bold; }
-.shop-tabs { display: flex; gap: 10px; margin-bottom: 10px; }
-.tab-btn {
-    flex: 1; padding: 8px; background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); cursor: pointer;
-}
-.tab-btn.active { border-color: var(--gold); color: var(--gold); }
 
-/* --- FEEDBACK --- */
-.feedback {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    background: rgba(0,0,0,0.9); padding: 20px 40px; border-radius: 10px;
-    font-size: 2rem; font-weight: bold; color: var(--gold); border: 4px solid var(--gold);
-    animation: popIn 0.3s ease-out; z-index: 100;
+.shop-item {
+    background: rgba(255,255,255,0.1);
+    border: 2px solid transparent;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
+.shop-item.owned {
+    border-color: var(--gold);
+    opacity: 0.7;
+}
+
+.shop-item.selected {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: var(--gold);
+    box-shadow: 0 0 10px var(--gold);
+}
+
+.item-preview {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    background-color: #fff;
+}
+
+.price-tag {
+    color: var(--gold);
+    font-weight: bold;
+}
+
+.shop-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.tab-btn {
+    flex: 1;
+    padding: 8px;
+    background: transparent;
+    border: 1px solid var(--text-muted);
+    color: var(--text-muted);
+    cursor: pointer;
+}
+.tab-btn.active {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+
+/* --- FEEDBACK POPUP --- */
+.feedback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.9);
+    padding: 20px 40px;
+    border-radius: 10px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--gold);
+    border: 4px solid var(--gold);
+    animation: popIn 0.3s ease-out;
+    z-index: 100;
+}
+
 @keyframes popIn {
     0% { transform: translate(-50%, -50%) scale(0); }
     80% { transform: translate(-50%, -50%) scale(1.1); }
     100% { transform: translate(-50%, -50%) scale(1); }
 }
 
-/* Bakgrunner */
+/* Bakgrunner for EPOKER */
 body.epoch-stone { background: #2c3e50; }
 body.epoch-middle { background: #5d4037; }
 body.epoch-modern { background: #1abc9c; }
