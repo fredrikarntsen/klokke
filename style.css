@@ -1,5 +1,4 @@
 :root {
-    /* Fargepalett */
     --bg-color: #1a1a2e;
     --card-bg: rgba(22, 33, 62, 0.6);
     --primary: rgba(15, 52, 96, 0.8);
@@ -7,8 +6,6 @@
     --gold: #ffd700;
     --text-main: #ffffff;
     --text-muted: #dadada;
-    
-    /* Font */
     --font-main: 'Fredoka', sans-serif;
     --font-game: 'Press Start 2P', cursive;
 }
@@ -17,7 +14,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    user-select: none;
+    /* Fjernet user-select: none herfra da det kan ødelegge knapper */
 }
 
 body {
@@ -28,7 +25,6 @@ body {
     justify-content: center;
     min-height: 100vh;
     overflow-x: hidden;
-    
     background-size: cover;       
     background-position: center;  
     background-attachment: fixed; 
@@ -36,7 +32,6 @@ body {
     transition: background-image 0.5s ease-in-out;
 }
 
-/* --- HOVEDCONTAINER --- */
 #app-container {
     width: 100%;
     max-width: 600px;
@@ -48,11 +43,10 @@ body {
     box-shadow: 0 0 30px rgba(0,0,0,0.7);
     backdrop-filter: blur(10px); 
     -webkit-backdrop-filter: blur(10px);
-    transition: all 0.5s ease;
     border: 2px solid rgba(255,255,255,0.1);
+    z-index: 10; /* Sikrer at appen ligger over evt bakgrunnsrot */
 }
 
-/* --- TOPP BAR & VALUTA --- */
 #top-bar {
     padding: 10px 20px;
     display: flex;
@@ -81,10 +75,8 @@ body {
     font-family: var(--font-game);
     font-size: 0.7rem;
     cursor: pointer;
-    transition: all 0.2s;
 }
 
-/* --- GENERELT --- */
 .view {
     padding: 20px;
     flex-grow: 1;
@@ -92,14 +84,14 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    transition: opacity 0.3s ease;
 }
 
 .hidden { display: none !important; }
 
 h1, h2, h3 {
     margin-bottom: 15px;
-    text-shadow: 0 0 10px rgba(0,0,0,1), 2px 2px 0 rgba(0,0,0,1); 
+    text-shadow: 0 0 10px rgba(0,0,0,1); 
+    pointer-events: none; /* Lar klikk gå igjennom tekst */
 }
 
 .big-btn {
@@ -113,27 +105,16 @@ h1, h2, h3 {
     font-family: var(--font-game);
     margin: 20px 0;
     box-shadow: 0 4px 0 #922b3e;
-    transition: transform 0.1s;
     width: 100%;
     max-width: 300px;
     text-shadow: 2px 2px 0 #000;
 }
 .big-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #922b3e; }
 
-/* --- MENY --- */
-.game-title {
-    font-family: var(--font-game);
-    color: var(--gold);
-    font-size: 2rem;
-    text-shadow: 4px 4px 0 #000;
-    margin-top: 20px;
-}
-.menu-currency {
-    font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; text-shadow: 2px 2px 0 #000;
-}
-.level-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 400px;
-}
+.game-title { font-family: var(--font-game); color: var(--gold); font-size: 2rem; text-shadow: 4px 4px 0 #000; margin-top: 20px; }
+.menu-currency { font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; text-shadow: 2px 2px 0 #000; }
+.level-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 400px; }
+
 .level-btn {
     background: var(--primary);
     border: 2px solid #333;
@@ -150,8 +131,8 @@ h1, h2, h3 {
     text-shadow: 1px 1px 0 #000;
 }
 .level-btn:hover { background: #1a4b85; }
+.level-btn:active { transform: translateY(2px); }
 
-/* --- SPILL HEADER --- */
 .game-header { width: 100%; margin-bottom: 20px; }
 .epoch-badge {
     background: var(--gold); color: black; padding: 5px 15px;
@@ -163,227 +144,96 @@ h1, h2, h3 {
     width: 100%; height: 10px; background: rgba(0,0,0,0.5);
     border-radius: 5px; overflow: hidden; border: 1px solid #555;
 }
-.progress-bar {
-    height: 100%; background: var(--accent); width: 0%; transition: width 0.5s ease;
-}
+.progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s ease; }
 
-/* --- KLOKKA --- */
-.clock-container {
-    margin: 10px 0; position: relative; width: 300px; height: 300px;
-}
-#analog-clock {
-    width: 300px; height: 300px;
-    filter: drop-shadow(0 0 20px rgba(0,0,0,0.9));
-}
-.clock-face {
-    fill: rgba(255, 255, 255, 0.95);
-    stroke: #333;
-    stroke-width: 8px;
-    transition: all 0.5s ease;
-}
+.clock-container { margin: 10px 0; position: relative; width: 300px; height: 300px; }
+#analog-clock { width: 300px; height: 300px; filter: drop-shadow(0 0 20px rgba(0,0,0,0.9)); user-select: none; }
+.clock-face { fill: rgba(255, 255, 255, 0.95); stroke: #333; stroke-width: 8px; transition: all 0.5s ease; }
 .clock-center { fill: var(--accent); }
 .hand { transition: transform 0.3s cubic-bezier(0.4, 2.08, 0.55, 0.44); }
 .hour-hand { fill: #333; }
 .minute-hand { fill: var(--accent); }
-.clock-number {
-    font-family: var(--font-game); font-size: 24px; fill: #333;
-    text-anchor: middle; dominant-baseline: central; pointer-events: none;
-}
-
-/* Skins overstyring for klokke */
+.clock-number { font-family: var(--font-game); font-size: 24px; fill: #333; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .clock-face.skin-space { fill: #2c3e50; stroke: var(--gold); }
 .skin-space ~ #clock-numbers .clock-number { fill: var(--gold); }
 .clock-face.skin-soccer { fill: #27ae60; stroke: white; }
 
-
-/* --- KONTROLLER --- */
 .question-area h3 { font-size: 1.5rem; margin-bottom: 15px; }
 .control-panel { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-
 .adjust-btn {
-    background: var(--primary);
-    color: white;
-    border: 1px solid white;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    min-width: 60px;
-    font-weight: bold;
-    box-shadow: 0 2px 0 #000;
-    transition: all 0.2s;
+    background: var(--primary); color: white; border: 1px solid white; padding: 10px;
+    border-radius: 5px; cursor: pointer; min-width: 60px; font-weight: bold; box-shadow: 0 2px 0 #000;
 }
 .adjust-btn:active { transform: translateY(2px); box-shadow: none; }
 
 .action-btn {
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-    width: 100%;
-    font-weight: bold;
-    box-shadow: 0 4px 0 #922b3e;
-    transition: all 0.2s;
+    background: var(--accent); color: white; border: none; padding: 10px 20px;
+    font-size: 1rem; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%;
+    font-weight: bold; box-shadow: 0 4px 0 #922b3e;
 }
 .action-btn:active { transform: translateY(2px); box-shadow: none; }
 
 .quiz-btn {
-    background: rgba(255, 255, 255, 0.9);
-    color: black;
-    border: none;
-    padding: 15px;
-    font-size: 1.2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 4px 0 #ccc;
-    width: 100%;
-    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.9); color: black; border: none; padding: 15px;
+    font-size: 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold;
+    box-shadow: 0 4px 0 #ccc; width: 100%; margin-bottom: 10px;
 }
 .quiz-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #ccc; }
+#digital-input-area input { width: 60px; padding: 10px; font-size: 1.5rem; text-align: center; border-radius: 5px; border: none; background: rgba(255,255,255,0.9); }
 
-#digital-input-area input {
-    width: 60px; padding: 10px; font-size: 1.5rem; text-align: center;
-    border-radius: 5px; border: none; background: rgba(255,255,255,0.9);
-}
-
-/* --- BUTIKK --- */
-.shop-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
-    margin-top: 20px; width: 100%; max-height: 400px; overflow-y: auto;
-}
+.shop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; width: 100%; max-height: 400px; overflow-y: auto; }
 .shop-item {
-    background: rgba(0,0,0,0.4); border: 2px solid transparent;
-    padding: 10px; border-radius: 10px; cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; transition: transform 0.1s;
+    background: rgba(0,0,0,0.4); border: 2px solid transparent; padding: 10px; border-radius: 10px;
+    cursor: pointer; display: flex; flex-direction: column; align-items: center;
 }
 .shop-item:active { transform: scale(0.98); }
 .shop-item.owned { border-color: var(--gold); background: rgba(0,0,0,0.6); }
-.shop-item.selected {
-    background: rgba(255, 215, 0, 0.2); border-color: var(--gold); box-shadow: 0 0 10px var(--gold);
-}
-.item-preview {
-    width: 50px; height: 50px; margin-bottom: 10px;
-    background-size: cover; background-position: center;
-    border-radius: 50%; background-color: #fff; border: 2px solid white;
-}
+.shop-item.selected { background: rgba(255, 215, 0, 0.2); border-color: var(--gold); box-shadow: 0 0 10px var(--gold); }
+.item-preview { width: 50px; height: 50px; margin-bottom: 10px; background-size: cover; background-position: center; border-radius: 50%; background-color: #fff; border: 2px solid white; }
 .price-tag { color: var(--gold); font-weight: bold; text-shadow: 1px 1px 0 #000; }
 .shop-tabs { display: flex; gap: 10px; margin-bottom: 10px; }
-.tab-btn {
-    flex: 1; padding: 8px; background: rgba(0,0,0,0.5);
-    border: 1px solid var(--text-muted); color: var(--text-muted); cursor: pointer; font-weight: bold;
-}
+.tab-btn { flex: 1; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid var(--text-muted); color: var(--text-muted); cursor: pointer; font-weight: bold; }
 .tab-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.2); }
+
 .feedback {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     background: rgba(0,0,0,0.95); padding: 20px 40px; border-radius: 10px;
     font-size: 2rem; font-weight: bold; color: var(--gold); border: 4px solid var(--gold);
-    animation: popIn 0.3s ease-out; z-index: 100; text-align: center; white-space: nowrap;
-    box-shadow: 0 0 20px var(--gold);
+    animation: popIn 0.3s ease-out; z-index: 100; text-align: center; white-space: nowrap; box-shadow: 0 0 20px var(--gold);
 }
-@keyframes popIn {
-    0% { transform: translate(-50%, -50%) scale(0); }
-    80% { transform: translate(-50%, -50%) scale(1.1); }
-    100% { transform: translate(-50%, -50%) scale(1); }
-}
+@keyframes popIn { 0% { transform: translate(-50%, -50%) scale(0); } 80% { transform: translate(-50%, -50%) scale(1.1); } 100% { transform: translate(-50%, -50%) scale(1); } }
 
-
-/* =========================================
-   EPOKE-THEMES (Struktur & Standard Bakgrunn)
-   ========================================= */
-
-/* --- STEINALDER --- */
-body.epoch-stone { 
-    background-image: url('https://images.unsplash.com/photo-1516641396056-0ce60a85d49f?q=80&w=1200&auto=format&fit=crop');
-}
-body.epoch-stone #app-container {
-    background-color: rgba(60, 60, 60, 0.9);
-    border: 8px solid #5a5a5a;
-    border-radius: 25px 5px 20px 10px;
-    box-shadow: 10px 10px 30px rgba(0,0,0,0.8);
-}
+/* EPOKE-THEMES */
+body.epoch-stone { background-image: url('https://images.unsplash.com/photo-1516641396056-0ce60a85d49f?q=80&w=1200&auto=format&fit=crop'); }
+body.epoch-stone #app-container { background-color: rgba(60, 60, 60, 0.9); border: 8px solid #5a5a5a; border-radius: 25px 5px 20px 10px; box-shadow: 10px 10px 30px rgba(0,0,0,0.8); }
 body.epoch-stone .clock-face { stroke: #5a5a5a; stroke-width: 15px; stroke-dasharray: 5, 2; }
-body.epoch-stone .adjust-btn, body.epoch-stone .nav-btn, body.epoch-stone .quiz-btn {
-    background: #7f8c8d; color: #fff; border: 3px solid #2c3e50;
-    border-radius: 15px 5px; box-shadow: 3px 3px 0 #2c3e50; font-family: 'Fredoka', sans-serif;
-}
-body.epoch-stone .action-btn {
-    background: #e67e22; border-color: #d35400;
-}
+body.epoch-stone .adjust-btn, body.epoch-stone .nav-btn, body.epoch-stone .quiz-btn { background: #7f8c8d; color: #fff; border: 3px solid #2c3e50; border-radius: 15px 5px; box-shadow: 3px 3px 0 #2c3e50; font-family: 'Fredoka', sans-serif; }
+body.epoch-stone .action-btn { background: #e67e22; border-color: #d35400; }
 
-/* --- MIDDELALDER --- */
-body.epoch-middle { 
-    background-image: url('https://images.unsplash.com/photo-1533154683836-84ea2a41380f?q=80&w=1200&auto=format&fit=crop');
-}
-body.epoch-middle #app-container {
-    background-color: rgba(61, 43, 31, 0.9); border: 5px ridge #c0392b; border-radius: 10px;
-}
+body.epoch-middle { background-image: url('https://images.unsplash.com/photo-1533154683836-84ea2a41380f?q=80&w=1200&auto=format&fit=crop'); }
+body.epoch-middle #app-container { background-color: rgba(61, 43, 31, 0.9); border: 5px ridge #c0392b; border-radius: 10px; }
 body.epoch-middle .clock-face { stroke: #8e6e44; stroke-width: 12px; }
-body.epoch-middle .adjust-btn, body.epoch-middle .nav-btn {
-    background: #8e6e44; border: 2px solid #ffd700; color: #ffd700; border-radius: 4px;
-}
-body.epoch-middle .action-btn, body.epoch-middle .quiz-btn {
-    background: #a02c2c; border: 3px double #ffd700; color: #fff; font-family: serif; letter-spacing: 1px;
-}
+body.epoch-middle .adjust-btn, body.epoch-middle .nav-btn { background: #8e6e44; border: 2px solid #ffd700; color: #ffd700; border-radius: 4px; }
+body.epoch-middle .action-btn, body.epoch-middle .quiz-btn { background: #a02c2c; border: 3px double #ffd700; color: #fff; font-family: serif; letter-spacing: 1px; }
 
-/* --- NÅTID --- */
-body.epoch-modern { 
-    background-image: url('https://images.unsplash.com/photo-1449824913929-23352853d40d?q=80&w=1200&auto=format&fit=crop');
-}
-body.epoch-modern #app-container {
-    background-color: rgba(255, 255, 255, 0.7); border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 20px; color: #333;
-}
-body.epoch-modern h1, body.epoch-modern h2, body.epoch-modern h3, body.epoch-modern div {
-    color: #333; text-shadow: none;
-}
+body.epoch-modern { background-image: url('https://images.unsplash.com/photo-1449824913929-23352853d40d?q=80&w=1200&auto=format&fit=crop'); }
+body.epoch-modern #app-container { background-color: rgba(255, 255, 255, 0.7); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 20px; color: #333; }
+body.epoch-modern h1, body.epoch-modern h2, body.epoch-modern h3, body.epoch-modern div { color: #333; text-shadow: none; }
 body.epoch-modern .clock-face { stroke: #ccc; stroke-width: 4px; }
 body.epoch-modern .clock-number { fill: #000; }
-body.epoch-modern .adjust-btn, body.epoch-modern .nav-btn, body.epoch-modern .quiz-btn {
-    background: #fff; color: #007aff; border: 1px solid #007aff; border-radius: 8px; font-weight: 400;
-}
-body.epoch-modern .action-btn {
-    background: #007aff; color: white; border-radius: 20px;
-}
+body.epoch-modern .adjust-btn, body.epoch-modern .nav-btn, body.epoch-modern .quiz-btn { background: #fff; color: #007aff; border: 1px solid #007aff; border-radius: 8px; font-weight: 400; }
+body.epoch-modern .action-btn { background: #007aff; color: white; border-radius: 20px; }
 body.epoch-modern .game-title, body.epoch-modern .menu-currency { color: #333; text-shadow: none; }
 
-/* --- FREMTID --- */
-body.epoch-future { 
-    background-image: url('https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=1200&auto=format&fit=crop');
-}
-body.epoch-future #app-container {
-    background-color: rgba(0, 0, 0, 0.85); border: 2px solid #0ff; border-radius: 0;
-    box-shadow: 0 0 15px #0ff, inset 0 0 20px rgba(0, 255, 255, 0.2);
-}
-body.epoch-future .clock-face {
-    stroke: #0ff; stroke-width: 4px; fill: rgba(0,0,0,0.9); filter: drop-shadow(0 0 5px #0ff);
-}
+body.epoch-future { background-image: url('https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=1200&auto=format&fit=crop'); }
+body.epoch-future #app-container { background-color: rgba(0, 0, 0, 0.85); border: 2px solid #0ff; border-radius: 0; box-shadow: 0 0 15px #0ff, inset 0 0 20px rgba(0, 255, 255, 0.2); }
+body.epoch-future .clock-face { stroke: #0ff; stroke-width: 4px; fill: rgba(0,0,0,0.9); filter: drop-shadow(0 0 5px #0ff); }
 body.epoch-future .clock-number { fill: #0ff; text-shadow: 0 0 5px #0ff; }
-body.epoch-future .adjust-btn, body.epoch-future .nav-btn {
-    background: transparent; color: #0ff; border: 1px solid #0ff; border-radius: 0; text-shadow: 0 0 5px #0ff;
-}
-body.epoch-future .action-btn, body.epoch-future .quiz-btn {
-    background: transparent; border: 1px solid #f0f; color: #f0f; text-shadow: 0 0 5px #f0f; border-radius: 0;
-}
+body.epoch-future .adjust-btn, body.epoch-future .nav-btn { background: transparent; color: #0ff; border: 1px solid #0ff; border-radius: 0; text-shadow: 0 0 5px #0ff; }
+body.epoch-future .action-btn, body.epoch-future .quiz-btn { background: transparent; border: 1px solid #f0f; color: #f0f; text-shadow: 0 0 5px #f0f; border-radius: 0; }
 
-/* =========================================
-   SKINS OVERSTYRING (Ligger nederst for å vinne)
-   ========================================= */
-/* Når disse klassene er på body sammen med epoch-klassene, 
-   vil BAKGRUNNSBILDET endres, men knappene beholder epoch-stilen over. */
-
-body.skin-bg-fotball {
-    background-image: url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1200&auto=format&fit=crop') !important;
-}
-body.skin-bg-gaming {
-    background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop') !important;
-}
-body.skin-bg-dyr {
-    background-image: url('https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1200&auto=format&fit=crop') !important;
-}
-body.skin-bg-superhelt {
-    background-image: url('https://images.unsplash.com/photo-1565586665798-28564f89d34e?q=80&w=1200&auto=format&fit=crop') !important;
-}
+/* SKINS (Overrides) */
+body.skin-bg-fotball { background-image: url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1200&auto=format&fit=crop') !important; }
+body.skin-bg-gaming { background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop') !important; }
+body.skin-bg-dyr { background-image: url('https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1200&auto=format&fit=crop') !important; }
+body.skin-bg-superhelt { background-image: url('https://images.unsplash.com/photo-1565586665798-28564f89d34e?q=80&w=1200&auto=format&fit=crop') !important; }
