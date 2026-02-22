@@ -1,4 +1,4 @@
-/* TIDSREISEN: KLOKKEMESTEREN - Versjon 4.0 (Skins & Backgrounds) */
+/* TIDSREISEN: KLOKKEMESTEREN - Versjon 5.0 (Komplette Skins & Epoker) */
 
 // --- KONFIGURASJON ---
 
@@ -31,8 +31,8 @@ const SHOP_ITEMS = [
     
     // Bakgrunner
     { id: "bg_default", type: "background", name: "Tidsreise (Standard)", cost: 0, cssClass: "" },
-    { id: "bg_fotball", type: "background", name: "Stadion", cost: 250, cssClass: "skin-bg-fotball" },
-    { id: "bg_gaming", type: "background", name: "Voxel Verden", cost: 300, cssClass: "skin-bg-gaming" },
+    { id: "bg_fotball", type: "background", name: "Fotballbane", cost: 250, cssClass: "skin-bg-fotball" },
+    { id: "bg_gaming", type: "background", name: "Minecraft-stil", cost: 300, cssClass: "skin-bg-gaming" },
     { id: "bg_dyr", type: "background", name: "Safari", cost: 200, cssClass: "skin-bg-dyr" },
     { id: "bg_by", type: "background", name: "Superhelt By", cost: 350, cssClass: "skin-bg-superhelt" }
 ];
@@ -85,11 +85,10 @@ function init() {
     renderLevelGrid();
     setupEventListeners();
     updateCurrencyUI();
-    applyEquippedItems(); // Setter visere, urskive OG bakgrunn
+    applyEquippedItems(); // Setter alt utseende
     drawClockFace();
 }
 
-// --- TEGN TALL PÅ KLOKKA ---
 function drawClockFace() {
     ui.clockNumbersGroup.innerHTML = "";
     const centerX = 150;
@@ -110,7 +109,6 @@ function drawClockFace() {
     }
 }
 
-// --- VISER-ROTASJON ---
 function updateClockHands(h, m) {
     const mDeg = m * 6;
     const hDeg = (h * 30) + (m * 0.5);
@@ -251,7 +249,6 @@ function checkAnswer(isCorrect) {
     }
 }
 
-// --- KNAPPER ---
 document.getElementById('submit-clock-btn').onclick = () => {
     const target = state.currentTask.targetTime;
     const user = state.currentTask.userTime;
@@ -319,18 +316,28 @@ function renderLevelGrid() {
     }
 }
 
+// Render butikken basert på kategori (Urskiver, Visere, Bakgrunner)
 function renderShop(category) {
     ui.shopGrid.innerHTML = "";
+    
+    // Filtrer varene basert på knappetrykket
     const items = SHOP_ITEMS.filter(item => item.type === category);
+    
     items.forEach(item => {
         const isOwned = state.ownedItems.includes(item.id);
         const isEquipped = state.equipped[category] === item.id;
+        
         const div = document.createElement('div');
         div.className = `shop-item ${isOwned ? 'owned' : ''} ${isEquipped ? 'selected' : ''}`;
+        
+        // Viser pris hvis man ikke eier den, eller "Eier" / "Valgt"
+        let priceText = item.cost + ' 💎';
+        if (isOwned) priceText = isEquipped ? 'Valgt' : 'Eier';
+
         div.innerHTML = `
             <div class="item-preview ${item.cssClass || ''}" style="background-color: ${item.color || '#fff'}"></div>
             <span>${item.name}</span>
-            <span class="price-tag">${isOwned ? (isEquipped ? 'Valgt' : 'Eier') : item.cost + ' 💎'}</span>
+            <span class="price-tag">${priceText}</span>
         `;
         div.onclick = () => handleShopClick(item);
         ui.shopGrid.appendChild(div);
@@ -339,15 +346,17 @@ function renderShop(category) {
 
 function handleShopClick(item) {
     if (state.ownedItems.includes(item.id)) {
+        // Allerede eier -> Velg den
         state.equipped[item.type] = item.id;
         saveData();
-        renderShop(item.type);
+        renderShop(item.type); // Oppdater visning for å vise "Valgt"
         applyEquippedItems();
     } else {
+        // Ikke eier -> Kjøp den?
         if (state.crystals >= item.cost) {
             state.crystals -= item.cost;
             state.ownedItems.push(item.id);
-            state.equipped[item.type] = item.id;
+            state.equipped[item.type] = item.id; // Auto-velg ved kjøp
             saveData();
             updateCurrencyUI();
             renderShop(item.type);
@@ -374,14 +383,18 @@ function applyEquippedItems() {
 
 function applyBackground() {
     const bgId = state.equipped.background;
+    
+    // Fjern alle gamle bakgrunnsklasser fra body først
+    document.body.className = "";
+
     if (bgId === "bg_default") {
-        // Hvis standard: La epoken bestemme
+        // Hvis standard: La epoken bestemme (tidsreisen)
         const epoch = EPOCHS[state.currentEpochIndex];
-        document.body.className = epoch.bgClass;
+        document.body.classList.add(epoch.bgClass);
     } else {
         // Hvis skin valgt: Bruk skinnet
         const item = SHOP_ITEMS.find(i => i.id === bgId);
-        if (item) document.body.className = item.cssClass;
+        if (item) document.body.classList.add(item.cssClass);
     }
 }
 
@@ -389,7 +402,8 @@ function updateEpochUI() {
     const epoch = EPOCHS[state.currentEpochIndex];
     ui.epochName.innerText = epoch.name;
     updateProgressUI();
-    applyBackground(); // Sjekk om vi skal vise epoke-farge eller skin
+    // Oppdater bakgrunn hvis vi er i "Standard"-modus
+    applyBackground(); 
 }
 
 function updateProgressUI() {
@@ -420,11 +434,10 @@ function switchScreen(screenName) {
     if (screenName === 'menu') {
         screens.menu.classList.remove('hidden');
         document.getElementById('top-bar').classList.add('hidden');
-        // Fjern bakgrunn i menyen? Nei, la den være kul.
         applyBackground();
     } else if (screenName === 'shop') {
         screens.shop.classList.remove('hidden');
-        renderShop('clockface');
+        renderShop('clockface'); // Starter alltid på urskiver
     } else if (screenName === 'game') {
         screens.game.classList.remove('hidden');
         drawClockFace(); 
@@ -459,10 +472,15 @@ function setupEventListeners() {
     document.getElementById('shop-btn').onclick = () => switchScreen('shop');
     document.getElementById('home-btn').onclick = () => switchScreen('menu');
     document.getElementById('back-from-shop').onclick = () => switchScreen('menu');
+    
+    // Faner i butikken
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.onclick = (e) => {
+            // Fjern active fra alle
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            // Legg til active på den som ble klikket
             e.target.classList.add('active');
+            // Tegn butikken på nytt med riktig kategori (data-category)
             renderShop(e.target.dataset.category);
         };
     });
