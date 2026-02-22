@@ -36,7 +36,7 @@ body {
     transition: background-image 0.5s ease-in-out;
 }
 
-/* --- HOVEDCONTAINER (Endres basert på epoke lenger ned) --- */
+/* --- HOVEDCONTAINER --- */
 #app-container {
     width: 100%;
     max-width: 600px;
@@ -49,7 +49,7 @@ body {
     backdrop-filter: blur(10px); 
     -webkit-backdrop-filter: blur(10px);
     transition: all 0.5s ease;
-    border: 2px solid rgba(255,255,255,0.1); /* Standard kant */
+    border: 2px solid rgba(255,255,255,0.1);
 }
 
 /* --- TOPP BAR & VALUTA --- */
@@ -84,7 +84,7 @@ body {
     transition: all 0.2s;
 }
 
-/* --- GENERELT OPPSETT --- */
+/* --- GENERELT --- */
 .view {
     padding: 20px;
     flex-grow: 1;
@@ -102,7 +102,6 @@ h1, h2, h3 {
     text-shadow: 0 0 10px rgba(0,0,0,1), 2px 2px 0 rgba(0,0,0,1); 
 }
 
-/* Stor knapp (Meny etc) */
 .big-btn {
     background: linear-gradient(135deg, var(--accent), #c0392b);
     color: white;
@@ -121,7 +120,7 @@ h1, h2, h3 {
 }
 .big-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #922b3e; }
 
-/* --- MENY & LEVEL GRID --- */
+/* --- MENY --- */
 .game-title {
     font-family: var(--font-game);
     color: var(--gold);
@@ -152,7 +151,7 @@ h1, h2, h3 {
 }
 .level-btn:hover { background: #1a4b85; }
 
-/* --- GAME HEADER --- */
+/* --- SPILL HEADER --- */
 .game-header { width: 100%; margin-bottom: 20px; }
 .epoch-badge {
     background: var(--gold); color: black; padding: 5px 15px;
@@ -197,14 +196,10 @@ h1, h2, h3 {
 .clock-face.skin-soccer { fill: #27ae60; stroke: white; }
 
 
-/* --- KONTROLLER (Knapper som skal endres) --- */
+/* --- KONTROLLER --- */
 .question-area h3 { font-size: 1.5rem; margin-bottom: 15px; }
+.control-panel { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
-.control-panel {
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
-}
-
-/* Standard Adjust Button */
 .adjust-btn {
     background: var(--primary);
     color: white;
@@ -219,7 +214,6 @@ h1, h2, h3 {
 }
 .adjust-btn:active { transform: translateY(2px); box-shadow: none; }
 
-/* Standard Action Button */
 .action-btn {
     background: var(--accent);
     color: white;
@@ -246,7 +240,7 @@ h1, h2, h3 {
     cursor: pointer;
     font-weight: bold;
     box-shadow: 0 4px 0 #ccc;
-    width: 100%; /* Sørg for at de fyller bredden */
+    width: 100%;
     margin-bottom: 10px;
 }
 .quiz-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #ccc; }
@@ -298,175 +292,98 @@ h1, h2, h3 {
 
 
 /* =========================================
-   EPOKE-SPESIFIKKE STILER (THEMES)
+   EPOKE-THEMES (Struktur & Standard Bakgrunn)
    ========================================= */
 
-/* --- STEINALDER (Epoch 1) --- */
+/* --- STEINALDER --- */
 body.epoch-stone { 
     background-image: url('https://images.unsplash.com/photo-1516641396056-0ce60a85d49f?q=80&w=1200&auto=format&fit=crop');
 }
-
-/* UI Theme: Steinalder */
 body.epoch-stone #app-container {
     background-color: rgba(60, 60, 60, 0.9);
     border: 8px solid #5a5a5a;
-    border-radius: 25px 5px 20px 10px; /* Uregelmessig form */
+    border-radius: 25px 5px 20px 10px;
     box-shadow: 10px 10px 30px rgba(0,0,0,0.8);
 }
-body.epoch-stone .clock-face {
-    stroke: #5a5a5a;
-    stroke-width: 15px;
-    stroke-dasharray: 5, 2; /* Røft utseende */
-}
-body.epoch-stone .adjust-btn, 
-body.epoch-stone .action-btn,
-body.epoch-stone .quiz-btn,
-body.epoch-stone .nav-btn {
-    background: #7f8c8d;
-    color: #fff;
-    border: 3px solid #2c3e50;
-    border-radius: 15px 5px;
-    box-shadow: 3px 3px 0 #2c3e50;
-    font-family: 'Fredoka', sans-serif; /* Mykere font for stein */
+body.epoch-stone .clock-face { stroke: #5a5a5a; stroke-width: 15px; stroke-dasharray: 5, 2; }
+body.epoch-stone .adjust-btn, body.epoch-stone .nav-btn, body.epoch-stone .quiz-btn {
+    background: #7f8c8d; color: #fff; border: 3px solid #2c3e50;
+    border-radius: 15px 5px; box-shadow: 3px 3px 0 #2c3e50; font-family: 'Fredoka', sans-serif;
 }
 body.epoch-stone .action-btn {
-    background: #e67e22; /* Rustfarge for action */
-    border-color: #d35400;
+    background: #e67e22; border-color: #d35400;
 }
 
-
-/* --- MIDDELALDER (Epoch 2) --- */
+/* --- MIDDELALDER --- */
 body.epoch-middle { 
     background-image: url('https://images.unsplash.com/photo-1533154683836-84ea2a41380f?q=80&w=1200&auto=format&fit=crop');
 }
-
-/* UI Theme: Middelalder (Treverk og Gull) */
 body.epoch-middle #app-container {
-    background-color: rgba(61, 43, 31, 0.9); /* Mørkt tre */
-    border: 5px ridge #c0392b;
-    border-radius: 10px;
-    box-shadow: 0 0 20px #000;
+    background-color: rgba(61, 43, 31, 0.9); border: 5px ridge #c0392b; border-radius: 10px;
 }
-body.epoch-middle .clock-face {
-    stroke: #8e6e44; /* Treverk-farge */
-    stroke-width: 12px;
+body.epoch-middle .clock-face { stroke: #8e6e44; stroke-width: 12px; }
+body.epoch-middle .adjust-btn, body.epoch-middle .nav-btn {
+    background: #8e6e44; border: 2px solid #ffd700; color: #ffd700; border-radius: 4px;
 }
-body.epoch-middle .adjust-btn, 
-body.epoch-middle .nav-btn {
-    background: #8e6e44;
-    border: 2px solid #ffd700; /* Gullkant */
-    color: #ffd700;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px #000;
-}
-body.epoch-middle .action-btn,
-body.epoch-middle .quiz-btn {
-    background: #a02c2c; /* Rød fløyel */
-    border: 3px double #ffd700;
-    color: #fff;
-    font-family: serif; /* Mer klassisk font */
-    letter-spacing: 1px;
+body.epoch-middle .action-btn, body.epoch-middle .quiz-btn {
+    background: #a02c2c; border: 3px double #ffd700; color: #fff; font-family: serif; letter-spacing: 1px;
 }
 
-
-/* --- NÅTID (Epoch 3) --- */
+/* --- NÅTID --- */
 body.epoch-modern { 
     background-image: url('https://images.unsplash.com/photo-1449824913929-23352853d40d?q=80&w=1200&auto=format&fit=crop');
 }
-
-/* UI Theme: Moderne (Rent, Glass, iPhone-aktig) */
 body.epoch-modern #app-container {
-    background-color: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 20px;
-    color: #333;
+    background-color: rgba(255, 255, 255, 0.7); border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px; color: #333;
 }
-/* Juster tekstfarger for lys bakgrunn */
 body.epoch-modern h1, body.epoch-modern h2, body.epoch-modern h3, body.epoch-modern div {
-    color: #333;
-    text-shadow: none;
+    color: #333; text-shadow: none;
 }
-body.epoch-modern .clock-face {
-    stroke: #ccc;
-    stroke-width: 4px;
-}
-body.epoch-modern .clock-number {
-    fill: #000;
-}
-body.epoch-modern .adjust-btn, 
-body.epoch-modern .nav-btn,
-body.epoch-modern .quiz-btn {
-    background: #fff;
-    color: #007aff; /* iOS blå */
-    border: 1px solid #007aff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    font-weight: 400;
+body.epoch-modern .clock-face { stroke: #ccc; stroke-width: 4px; }
+body.epoch-modern .clock-number { fill: #000; }
+body.epoch-modern .adjust-btn, body.epoch-modern .nav-btn, body.epoch-modern .quiz-btn {
+    background: #fff; color: #007aff; border: 1px solid #007aff; border-radius: 8px; font-weight: 400;
 }
 body.epoch-modern .action-btn {
-    background: #007aff;
-    color: white;
-    border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(0,122,255,0.4);
+    background: #007aff; color: white; border-radius: 20px;
 }
-body.epoch-modern .game-title, body.epoch-modern .menu-currency {
-    color: #333; /* Mørk tekst på lys bakgrunn */
-    text-shadow: none;
-}
+body.epoch-modern .game-title, body.epoch-modern .menu-currency { color: #333; text-shadow: none; }
 
-
-/* --- FREMTID (Epoch 4) --- */
+/* --- FREMTID --- */
 body.epoch-future { 
     background-image: url('https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=1200&auto=format&fit=crop');
 }
-
-/* UI Theme: Fremtid (Neon, Cyberpunk) */
 body.epoch-future #app-container {
-    background-color: rgba(0, 0, 0, 0.85);
-    border: 2px solid #0ff;
-    border-radius: 0; /* Skarpe kanter */
+    background-color: rgba(0, 0, 0, 0.85); border: 2px solid #0ff; border-radius: 0;
     box-shadow: 0 0 15px #0ff, inset 0 0 20px rgba(0, 255, 255, 0.2);
 }
 body.epoch-future .clock-face {
-    stroke: #0ff;
-    stroke-width: 4px;
-    fill: rgba(0,0,0,0.9);
-    filter: drop-shadow(0 0 5px #0ff);
+    stroke: #0ff; stroke-width: 4px; fill: rgba(0,0,0,0.9); filter: drop-shadow(0 0 5px #0ff);
 }
-body.epoch-future .clock-number {
-    fill: #0ff;
-    text-shadow: 0 0 5px #0ff;
+body.epoch-future .clock-number { fill: #0ff; text-shadow: 0 0 5px #0ff; }
+body.epoch-future .adjust-btn, body.epoch-future .nav-btn {
+    background: transparent; color: #0ff; border: 1px solid #0ff; border-radius: 0; text-shadow: 0 0 5px #0ff;
 }
-body.epoch-future .adjust-btn, 
-body.epoch-future .nav-btn {
-    background: transparent;
-    color: #0ff;
-    border: 1px solid #0ff;
-    border-radius: 0;
-    text-shadow: 0 0 5px #0ff;
-    box-shadow: none;
-}
-body.epoch-future .adjust-btn:hover {
-    background: rgba(0, 255, 255, 0.2);
-}
-body.epoch-future .action-btn,
-body.epoch-future .quiz-btn {
-    background: transparent;
-    border: 1px solid #f0f; /* Rosa neon */
-    color: #f0f;
-    text-shadow: 0 0 5px #f0f;
-    border-radius: 0;
-    box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
-}
-body.epoch-future .action-btn:hover {
-    background: rgba(255, 0, 255, 0.2);
+body.epoch-future .action-btn, body.epoch-future .quiz-btn {
+    background: transparent; border: 1px solid #f0f; color: #f0f; text-shadow: 0 0 5px #f0f; border-radius: 0;
 }
 
+/* =========================================
+   SKINS OVERSTYRING (Ligger nederst for å vinne)
+   ========================================= */
+/* Når disse klassene er på body sammen med epoch-klassene, 
+   vil BAKGRUNNSBILDET endres, men knappene beholder epoch-stilen over. */
 
-/* --- SKINS (Bakgrunner fra butikken) --- */
-/* Disse bruker Standard/Modern UI stilen, men med sitt bakgrunnsbilde */
-
-body.skin-bg-fotball { background-image: url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1200&auto=format&fit=crop'); }
-body.skin-bg-gaming { background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop'); }
-body.skin-bg-dyr { background-image: url('https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1200&auto=format&fit=crop'); }
-body.skin-bg-superhelt { background-image: url('https://images.unsplash.com/photo-1565586665798-28564f89d34e?q=80&w=1200&auto=format&fit=crop'); }
+body.skin-bg-fotball {
+    background-image: url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1200&auto=format&fit=crop') !important;
+}
+body.skin-bg-gaming {
+    background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop') !important;
+}
+body.skin-bg-dyr {
+    background-image: url('https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1200&auto=format&fit=crop') !important;
+}
+body.skin-bg-superhelt {
+    background-image: url('https://images.unsplash.com/photo-1565586665798-28564f89d34e?q=80&w=1200&auto=format&fit=crop') !important;
+}
