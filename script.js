@@ -1,5 +1,6 @@
-/* TIDSREISEN: KLOKKEMESTEREN - Versjon 7.1 (Bugfix: Screens restored) */
+/* TIDSREISEN: KLOKKEMESTEREN - Versjon 8.0 (Skuddsikker start) */
 
+// --- KONFIGURASJON ---
 const LEVELS = {
     1: { name: "Hel og Halv", minutes: [0, 30], type: "analog" },
     2: { name: "Kvart over/på", minutes: [0, 15, 30, 45], type: "analog" },
@@ -30,6 +31,7 @@ const SHOP_ITEMS = [
     { id: "bg_by", type: "background", name: "Superhelt By", cost: 350, cssClass: "skin-bg-superhelt" }
 ];
 
+// --- GLOBALE VARIABLER (Defineres her for å unngå ReferenceError) ---
 let state = {
     crystals: 0,
     ownedItems: ["face_default", "hand_default", "bg_default"],
@@ -40,35 +42,41 @@ let state = {
     currentTask: null
 };
 
-// HER MANGLET DETTE I FORRIGE VERSJON:
-const screens = {
-    menu: document.getElementById('main-menu'),
-    shop: document.getElementById('shop-view'),
-    game: document.getElementById('game-view')
-};
+// Vi oppretter variablene tomme først, så fyller vi dem i init()
+let screens = {};
+let ui = {};
 
-const ui = {
-    crystalDisplays: [document.getElementById('crystal-count'), document.getElementById('menu-crystal-count')],
-    levelGrid: document.getElementById('level-grid'),
-    shopGrid: document.getElementById('shop-grid'),
-    epochName: document.getElementById('current-epoch-name'),
-    progressBar: document.getElementById('level-progress'),
-    feedback: document.getElementById('feedback-msg'),
-    questionText: document.getElementById('question-text'),
-    digitalDisplay: document.getElementById('digital-display'),
-    hourHand: document.getElementById('hour-hand-group'),
-    minuteHand: document.getElementById('minute-hand-group'),
-    clockFace: document.getElementById('clock-face-circle'),
-    clockNumbersGroup: document.getElementById('clock-numbers'),
-    interactionArea: {
-        quiz: document.getElementById('quiz-buttons'),
-        controls: document.getElementById('clock-controls'),
-        digital: document.getElementById('digital-input-area')
-    },
-    inputs: { h: document.getElementById('inp-hour'), m: document.getElementById('inp-min') }
-};
-
+// --- INIT (Startmotoren) ---
 function init() {
+    // 1. Koble til HTML-elementene NÅ som vi vet de er lastet
+    screens = {
+        menu: document.getElementById('main-menu'),
+        shop: document.getElementById('shop-view'),
+        game: document.getElementById('game-view')
+    };
+
+    ui = {
+        crystalDisplays: [document.getElementById('crystal-count'), document.getElementById('menu-crystal-count')],
+        levelGrid: document.getElementById('level-grid'),
+        shopGrid: document.getElementById('shop-grid'),
+        epochName: document.getElementById('current-epoch-name'),
+        progressBar: document.getElementById('level-progress'),
+        feedback: document.getElementById('feedback-msg'),
+        questionText: document.getElementById('question-text'),
+        digitalDisplay: document.getElementById('digital-display'),
+        hourHand: document.getElementById('hour-hand-group'),
+        minuteHand: document.getElementById('minute-hand-group'),
+        clockFace: document.getElementById('clock-face-circle'),
+        clockNumbersGroup: document.getElementById('clock-numbers'),
+        interactionArea: {
+            quiz: document.getElementById('quiz-buttons'),
+            controls: document.getElementById('clock-controls'),
+            digital: document.getElementById('digital-input-area')
+        },
+        inputs: { h: document.getElementById('inp-hour'), m: document.getElementById('inp-min') }
+    };
+
+    // 2. Start spillet
     loadSaveData();
     renderLevelGrid();
     setupEventListeners();
@@ -77,6 +85,7 @@ function init() {
     drawClockFace();
 }
 
+// --- GRAFIKK ---
 function drawClockFace() {
     if (!ui.clockNumbersGroup) return;
     ui.clockNumbersGroup.innerHTML = "";
@@ -99,6 +108,7 @@ function updateClockHands(h, m) {
     ui.minuteHand.setAttribute('transform', `rotate(${mDeg}, 150, 150)`);
 }
 
+// --- SPILLFLYT ---
 function startGame(levelId) {
     state.currentLevel = levelId;
     state.currentEpochIndex = 0;
@@ -148,10 +158,12 @@ function generateTimeForLevel(lvl) {
 function renderQuestionUI() {
     const task = state.currentTask;
     const timeText = timeToNorwegianText(task.targetTime.h, task.targetTime.m);
-    ui.interactionArea.quiz.classList.add('hidden');
-    ui.interactionArea.controls.classList.add('hidden');
-    ui.interactionArea.digital.classList.add('hidden');
-    ui.digitalDisplay.classList.add('hidden');
+    
+    // Safety check
+    if(ui.interactionArea.quiz) ui.interactionArea.quiz.classList.add('hidden');
+    if(ui.interactionArea.controls) ui.interactionArea.controls.classList.add('hidden');
+    if(ui.interactionArea.digital) ui.interactionArea.digital.classList.add('hidden');
+    if(ui.digitalDisplay) ui.digitalDisplay.classList.add('hidden');
 
     if (task.type === "setClock") {
         updateClockHands(task.userTime.h, task.userTime.m);
@@ -203,6 +215,7 @@ function checkAnswer(isCorrect) {
     }
 }
 
+// --- EVENT HANDLERS ---
 document.getElementById('submit-clock-btn').onclick = () => {
     const target = state.currentTask.targetTime; const user = state.currentTask.userTime;
     if (user.h === target.h && user.m === target.m) checkAnswer(true); else showFeedback("Feil tid. Prøv igjen!", false);
@@ -221,6 +234,8 @@ window.adjustTime = function(addH, addM) {
     t.h += addH; if (t.h > 12) t.h = 1; if (t.h < 1) t.h = 12;
     updateClockHands(t.h, t.m);
 };
+
+// --- HJELPEFUNKSJONER ---
 function timeToNorwegianText(h, m) {
     let nextHour = h + 1; if (nextHour > 12) nextHour = 1;
     if (m === 0) return `Klokka er ${h}`; if (m === 15) return `Kvart over ${h}`;
@@ -233,6 +248,7 @@ function timeToNorwegianText(h, m) {
 }
 
 function renderLevelGrid() {
+    if(!ui.levelGrid) return;
     ui.levelGrid.innerHTML = "";
     for (const [id, data] of Object.entries(LEVELS)) {
         const btn = document.createElement('div');
@@ -242,6 +258,7 @@ function renderLevelGrid() {
     }
 }
 function renderShop(category) {
+    if(!ui.shopGrid) return;
     ui.shopGrid.innerHTML = "";
     const items = SHOP_ITEMS.filter(item => item.type === category);
     items.forEach(item => {
@@ -286,10 +303,8 @@ function applyBackground() {
     const epoch = EPOCHS[state.currentEpochIndex];
     const bgId = state.equipped.background;
 
-    // 1. Alltid sett epoke-klassen
     document.body.className = epoch.bgClass;
 
-    // 2. Hvis custom skin, legg til det
     if (bgId !== "bg_default") {
         const item = SHOP_ITEMS.find(i => i.id === bgId);
         if (item) document.body.classList.add(item.cssClass);
@@ -298,7 +313,7 @@ function applyBackground() {
 
 function updateEpochUI() {
     const epoch = EPOCHS[state.currentEpochIndex];
-    ui.epochName.innerText = epoch.name;
+    if(ui.epochName) ui.epochName.innerText = epoch.name;
     updateProgressUI();
     applyBackground();
 }
@@ -306,16 +321,20 @@ function updateEpochUI() {
 function updateProgressUI() {
     const epoch = EPOCHS[state.currentEpochIndex];
     const pct = (state.questionsAnsweredInEpoch / epoch.req) * 100;
-    ui.progressBar.style.width = `${pct}%`;
+    if(ui.progressBar) ui.progressBar.style.width = `${pct}%`;
 }
 function addCrystals(amount) { state.crystals += amount; updateCurrencyUI(); saveData(); }
-function updateCurrencyUI() { ui.crystalDisplays.forEach(el => el.innerText = state.crystals); }
+function updateCurrencyUI() { if(ui.crystalDisplays) ui.crystalDisplays.forEach(el => el.innerText = state.crystals); }
 function showFeedback(msg, isBigEvent) {
+    if(!ui.feedback) return;
     ui.feedback.innerText = msg; ui.feedback.classList.remove('hidden');
     setTimeout(() => ui.feedback.classList.add('hidden'), 1500);
 }
+
 function switchScreen(screenName) {
-    // HER BRUKES SCREENS, OG NÅ ER DEN DEFINERT :)
+    // Nå er screens garantert tilgjengelig fordi den er global
+    if(!screens.menu) return; // Ekstra sikkerhet
+
     Object.values(screens).forEach(s => s.classList.add('hidden'));
     document.getElementById('top-bar').classList.remove('hidden');
     if (screenName === 'menu') {
@@ -347,4 +366,6 @@ function setupEventListeners() {
         };
     });
 }
+
+// Kjør init
 init();
